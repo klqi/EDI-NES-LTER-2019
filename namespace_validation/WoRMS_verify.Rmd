@@ -19,39 +19,30 @@ Set up taxonomy table built from inputted data set
 
 ```{r}
 man.data <- read.csv("20190529_classify_classlabel.csv")
-my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/"
+my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
 
 ```
 
-
-## Script for using taxonomyCleanr package- not used
-
-```{r}
-taxa_map <- create_taxa_map(path = my_path, x = man.data, col = 'name')
-output <- resolve_sci_taxa(path = my_path, data.sources = 9)
-
-# compare output ids 
-man.ids <- man.data$international_id
-tclnr.ids <- taxa_map$authority_id
-# man.ids$differences <- 
-```
 
 ## Script for using taxize and worrms packages
 
 ```{r}
-
 # Resolve names 
-counter <- 28
+counter <- 1
 man.data$resolved_names <- NA_character_
 man.data$resolved_id <- NA_character_
+man.data$fixed <- FALSE
+man.data$data_source <- NA_character_
 for (row in 1:nrow(man.data)) {
   temp <- gnr_resolve(names = as.vector(man.data$name[counter]),  canonical = T,
-                      best_match_only = T, preferred_data_sources = as.character(9))
+                      best_match_only = T, preferred_data_sources = c(9, 4))
   # check if resolved
   if (!empty(temp)) {
     # add to resolved_names column
-    resolved_name <- temp[1, 'matched_name2']
-    man.data$resolved_names[counter] <- resolved_name 
+    resolved_name <- unlist(temp[1, 'matched_name2'])
+    authority <- unlist(temp[1, 'data_source_title'])
+    man.data$resolved_names[counter] <- resolved_name
+    man.data$data_source[counter] <- authority
     # edge case: check if international_id exists in column
     if (man.data$international_id[counter] == -999 | is.na(man.data$international_id[counter])) {
       # man.data$resolved_id[counter] <- wm_name2id(name=unlist(man.data$resolved_names[counter]))
@@ -67,6 +58,8 @@ for (row in 1:nrow(man.data)) {
       get.id <- paste(resolved_name, sep='.', "AphiaID")
       resolved_id <- response[1, get.id]
       man.data$resolved_id[counter] <- resolved_id
+      man.data$fixed[counter] <- TRUE
+      man.data$data_source[counter] <- "World Register of Marine Species"
     } else {
       # check worm ids with resolved names 
       test_name <- wm_id2name(id=man.data$international_id[counter])
@@ -76,6 +69,7 @@ for (row in 1:nrow(man.data)) {
       } else {
         # else fill in with id from resolved name
         man.data$resolved_id[counter] <- wm_name2id(name=unlist(man.data$resolved_names[counter]))
+        man.data$fixed[counter] <- TRUE
       }
     }
   } else {
@@ -89,6 +83,7 @@ for (row in 1:nrow(man.data)) {
       if (test_name == man.data$name[counter]) {
         # set resolved id to international id
         man.data$resolved_id[counter] <- man.data$international_id[counter]
+        man.data$data_source[counter] <- "World Register of Marine Species"
       }
       else {
         # set resolved id from resolved name
@@ -108,6 +103,8 @@ for (row in 1:nrow(man.data)) {
           man.data$resolved_id[counter] <- resolved_id
           # set resolved name tfdo resolved test_name
           man.data$resolved_names[counter] <- test_name
+          man.data$fixed[counter] <- TRUE
+          man.data$data_source[counter] <- "World Register of Marine Species"
         }
       }
     } else {
@@ -131,16 +128,18 @@ for (row in 1:nrow(man.data)) {
         man.data$resolved_id[counter] <- resolved_id
         # set resolved name tfdo resolved test_name
         man.data$resolved_names[counter] <- test_name
+        man.data$fixed[counter] <- TRUE
+        man.data$data_source[counter] <- "World Register of Marine Species"
       }
     }
   }
   counter <- counter + 1
 }
 
-# check worm ids with resolved names 
-# test_name <- wm_id2name(id =120533)
-# cat(test_name)
-# 
-# # set the resolved name if empty
-# 'resolved_name' =  query[1, 'matched_name2']
+# collect all names with no resolved id
+sosik_specific <- man.data$name[is.na(man.data$resolved_id)]
+worms_verified <- man.data$name[!is.na(man.data$resolved_id)]
+
+#convert to csv file 
+write.csv(man.data, my_path)
 ```

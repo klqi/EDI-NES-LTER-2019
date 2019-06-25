@@ -1,122 +1,122 @@
-"","id","name","international_id","resolved_names","resolved_id"
-"1",1,"Asterionellopsis glacialis",149139,"Asterionellopsis glacialis","149139"
-"2",2,"Ceratium",109506,"Ceratium","109506"
-"3",3,"Chaetoceros",148985,"Chaetoceros","148985"
-"4",4,"Corethron hystrix",179596,"Corethron hystrix","179596"
-"5",5,"Cylindrotheca",149003,"Cylindrotheca","149003"
-"6",6,"Dactyliosolen fragilissimus",149310,"Dactyliosolen fragilissimus","149310"
-"7",7,"Dactyliosolen blavyanus",179786,"Dactyliosolen blavyanus","179786"
-"8",8,"Dictyocha",157258,"Dictyocha","157258"
-"9",9,"Dinobryon",157240,"Dinobryon","157240"
-"10",10,"Ditylum brightwellii",149023,"Ditylum brightwellii","149023"
-"11",11,"Ephemera",291403,"Ephemera","291403"
-"12",12,"Eucampia cornuta",248058,"Eucampia cornuta","248058"
-"13",13,"Guinardia delicatula",149112,"Guinardia delicatula","149112"
-"14",14,"Guinardia flaccida",149132,"Guinardia flaccida","149132"
-"15",15,"Leptocylindrus",149038,"Leptocylindrus","149038"
-"16",16,"Pleurosigma",149181,"Pleurosigma","149181"
-"17",17,"Pseudo-nitzschia",291409,"Pseudo-nitzschia","149151"
-"18",18,"Rhizosolenia",149069,"Rhizosolenia","149069"
-"19",19,"Skeletonema",149073,"Skeletonema","149073"
-"20",20,"Thalassionema",149092,"Thalassionema","149092"
-"21",21,"Thalassiosira",148912,"Thalassiosira","148912"
-"22",22,"bad",NA,NA,NA
-"23",23,"detritus",NA,NA,NA
-"24",25,"mix",NA,NA,NA
-"25",27,"cryptophyta",17638,"Cryptophyta","17638"
-"26",28,"Dinophysis",109462,"Dinophysis","109462"
-"27",29,"Euglena",8012,"Euglena","8012"
-"28",30,"flagellate",NA,NA,NA
-"29",31,"Gyrodinium",109476,"Gyrodinium","109476"
-"30",33,"Lauderia annulata",149135,"Lauderia annulata","149135"
-"31",34,"Licmophora",149342,"Licmophora","149342"
-"32",35,"Phaeocystis",115088,"Phaeocystis","115088"
-"33",36,"Prorocentrum",109566,"Prorocentrum","109566"
-"34",37,"Pyramimonas",134529,"Pyramimonas","134529"
-"35",39,"Stephanopyxis",149630,"Stephanopyxis","149630"
-"36",40,"other",NA,NA,NA
-"37",41,"Cerataulina pelagica",149619,"Cerataulina pelagica","149619"
-"38",42,"Coscinodiscus",148917,"Coscinodiscus","148917"
-"39",43,"Gonyaulax",109519,"Gonyaulax","109519"
-"40",44,"Odontella",148963,"Odontella","148963"
-"41",45,"Guinardia striata",149113,"Guinardia striata","149113"
-"42",46,"Paralia sulcata",149055,"Paralia sulcata","149055"
-"43",48,"Hemiaulus",-999,"Hemiaulus","956056"
-"44",49,"Chaetoceros didymus",149122,"Chaetoceros didymus","149122"
-"45",50,"Leptocylindrus mediterraneus",149230,"Leptocylindrus mediterraneus","149230"
-"46",51,"Parvicorbicula socialis",105588,"Parvicorbicula socialis","105588"
-"47",52,"Delphineis",149179,"Delphineis","149179"
-"48",53,"amoeba",605376,"Amoeba","605376"
-"49",56,"Euplotes sp",NA,"Euplotes","179326"
-"50",57,"Laboea strobila",101264,"Laboea strobila","101264"
-"51",58,"Leegaardiella ovalis",101206,"Leegaardiella ovalis","101206"
-"52",62,"Strombidium capitatum",101282,"Strombidium capitatum","101282"
-"53",63,"Strombidium conicum",101289,"Strombidium conicum","101289"
-"54",64,"Strombidium inclinatum",428332,"Strombidium inclinatum","428332"
-"55",67,"Strombidium oculatum",101320,"Strombidium oculatum","101320"
-"56",68,"Strombidium wulffi",101344,"Strombidium wulffi","101344"
-"57",69,"Tiarina fusus",247943,"Tiarina fusus","247943"
-"58",70,"Tintinnida",425497,"Tintinnida","425497"
-"59",71,"Tontonia appendiculariformis",101345,"Tontonia appendiculariformis","101345"
-"60",72,"Tontonia gracillima",101347,"Tontonia gracillima","101347"
-"61",73,"Akashiwo",231787,"Akashiwo","231787"
-"62",75,"Bacillaria",149148,"Bacillaria","149148"
-"63",77,"Cochlodinium",109474,"Cochlodinium","109474"
-"64",78,"Chrysochromulina",115090,"Chrysochromulina","115090"
-"65",79,"Emiliania huxleyi",115104,"Emiliania huxleyi","115104"
-"66",80,"Heterocapsa rotundata",110152,"Heterocapsa rotundata","110152"
-"67",81,"Heterocapsa triquetra",110153,"Heterocapsa triquetra","110153"
-"68",82,"Karenia",231788,"Karenia","231788"
-"69",84,"Protoperidinium",109553,"Protoperidinium","109553"
-"70",86,"Pseudochattonella farcimen",531467,"Pseudochattonella farcimen","531467"
-"71",87,"Pyramimonas longicauda",160513,"Pyramimonas longicauda","160513"
-"72",88,"flagellate sp1",NA,NA,NA
-"73",90,"flagellate sp3",NA,NA,NA
-"74",92,"bead",NA,NA,NA
-"75",93,"bubble",NA,NA,NA
-"76",94,"pollen",NA,NA,NA
-"77",97,"camera spot",NA,NA,NA
-"78",26,"Corymbellus",162518,"Corymbellus","162518"
-"79",108,"Dinophyceae",19542,"Dinophyceae","19542"
-"80",32,"Chrysochromulina lanceolata",388470,"Chrysochromulina lanceolata","388470"
-"81",107,"Bacillariophyceae",148899,"Bacillariophyceae","148899"
-"82",55,"Didinium",341301,"Didinium","341301"
-"83",59,"Mesodinium",179320,"Mesodinium","179320"
-"84",60,"Pleuronema",NA,"Pleuronema","163556"
-"85",61,"Strobilidium",101185,"Strobilidium","101185"
-"86",65,"Strombidium sp1",101195,"Strombidium","101195"
-"87",66,"Strombidium sp2",101195,"Strombidium","101195"
-"88",74,"Amphidinium",109473,"Amphidinium","109473"
-"89",76,"Biddulphia",148967,"Biddulphia","148967"
-"90",83,"Katodinium or Torodinium",109410,"Katodinium","109477"
-"91",85,"Proterythropsis sp",231794,"Proterythropsis","231794"
-"92",98,"Balanion",292899,"Balanion","292899"
-"93",100,"Eutintinnus",183543,"Eutintinnus","183543"
-"94",101,"Favella",172431,"Favella","172431"
-"95",102,"Helicostomella subulata",240437,"Helicostomella subulata","240437"
-"96",103,"Stenosemella sp1",178825,"Stenosemella","178825"
-"97",104,"Stenosemella pacifica",417165,"Stenosemella pacifica","417165"
-"98",105,"Tintinnidium mucicola",247944,"Tintinnidium mucicola","247944"
-"99",89,"Calciopappus",235858,"Calciopappus","235858"
-"100",112,"Syracosphaera pulchra",235979,"Syracosphaera pulchra","235979"
-"101",110,"Apedinella",248096,"Apedinella","248096"
-"102",111,"Alexandrium",109470,"Alexandrium","109470"
-"103",109,"Vicicitus globosus",146203,"Dinoflagellata","146203"
-"104",106,"Tintinnopsis",163780,"Tintinnopsis","163780"
-"105",91,"pennate morphotype1",NA,NA,NA
-"106",113,"Ophiaster",115081,"Ophiaster","115081"
-"107",54,"Ciliate mix",1348,"Spirotrichea","1348"
-"108",47,"mix elongated",148899,"Bacillariophyceae","148899"
-"109",24,"pennate",148899,"Bacillariophyceae","148899"
-"110",114,"Acanthoica quattrospina",235802,"Acanthoica quattrospina","235802"
-"111",115,"Radiozoa",582421,"Radiozoa","582421"
-"112",116,"Bacteriastrum",149118,"Bacteriastrum","149118"
-"113",96,"zooplankton",2,"Animalia","2"
-"114",117,"Chaetoceros peruvianis",NA,"Chaetoceros peruvianus","178185"
-"115",118,"Chaetoceros debilis",NA,"Chaetoceros debilis","149219"
-"116",119,"Chaetoceros curvusetus",149221,"Chaetoceros curvisetus","149221"
-"117",120,"Chaetoceros socialis",149123,"Chaetoceros socialis","149123"
-"118",121,"Chaetoceros subtilis",156621,"Chaetoceros subtilis","156621"
-"119",122,"Chaetoceros danicus",149120,"Chaetoceros danicus","149120"
-"120",123,"Chaetoceros concavicornis",156607,"Chaetoceros concavicornis","156607"
-"121",124,"Oxytoxum",109528,"Oxytoxum","109528"
+,id,name,international_id,resolved_names,resolved_id,fixed,data_source
+1,1,Asterionellopsis glacialis,149139,Asterionellopsis glacialis,149139,FALSE,World Register of Marine Species
+2,2,Ceratium,109506,Ceratium,109506,FALSE,World Register of Marine Species
+3,3,Chaetoceros,148985,Chaetoceros,148985,FALSE,World Register of Marine Species
+4,4,Corethron hystrix,179596,Corethron hystrix,179596,FALSE,World Register of Marine Species
+5,5,Cylindrotheca,149003,Cylindrotheca,149003,FALSE,World Register of Marine Species
+6,6,Dactyliosolen fragilissimus,149310,Dactyliosolen fragilissimus,149310,FALSE,World Register of Marine Species
+7,7,Dactyliosolen blavyanus,179786,Dactyliosolen blavyanus,179786,FALSE,World Register of Marine Species
+8,8,Dictyocha,157258,Dictyocha,157258,FALSE,World Register of Marine Species
+9,9,Dinobryon,157240,Dinobryon,157240,FALSE,World Register of Marine Species
+10,10,Ditylum brightwellii,149023,Ditylum brightwellii,149023,FALSE,World Register of Marine Species
+11,11,Ephemera,291403,Ephemera,291403,FALSE,World Register of Marine Species
+12,12,Eucampia cornuta,248058,Eucampia cornuta,248058,FALSE,World Register of Marine Species
+13,13,Guinardia delicatula,149112,Guinardia delicatula,149112,FALSE,World Register of Marine Species
+14,14,Guinardia flaccida,149132,Guinardia flaccida,149132,FALSE,World Register of Marine Species
+15,15,Leptocylindrus,149038,Leptocylindrus,149038,FALSE,World Register of Marine Species
+16,16,Pleurosigma,149181,Pleurosigma,149181,FALSE,World Register of Marine Species
+17,17,Pseudo-nitzschia,291409,Pseudo-nitzschia,149151,TRUE,World Register of Marine Species
+18,18,Rhizosolenia,149069,Rhizosolenia,149069,FALSE,World Register of Marine Species
+19,19,Skeletonema,149073,Skeletonema,149073,FALSE,World Register of Marine Species
+20,20,Thalassionema,149092,Thalassionema,149092,FALSE,World Register of Marine Species
+21,21,Thalassiosira,148912,Thalassiosira,148912,FALSE,World Register of Marine Species
+22,22,bad,NA,NA,NA,FALSE,NA
+23,23,detritus,NA,NA,NA,FALSE,NA
+24,25,mix,NA,NA,NA,FALSE,NA
+25,27,cryptophyta,17638,Cryptophyta,17638,FALSE,World Register of Marine Species
+26,28,Dinophysis,109462,Dinophysis,109462,FALSE,World Register of Marine Species
+27,29,Euglena,8012,Euglena,8012,FALSE,World Register of Marine Species
+28,30,flagellate,NA,NA,NA,FALSE,NA
+29,31,Gyrodinium,109476,Gyrodinium,109476,FALSE,World Register of Marine Species
+30,33,Lauderia annulata,149135,Lauderia annulata,149135,FALSE,World Register of Marine Species
+31,34,Licmophora,149342,Licmophora,149342,FALSE,World Register of Marine Species
+32,35,Phaeocystis,115088,Phaeocystis,115088,FALSE,World Register of Marine Species
+33,36,Prorocentrum,109566,Prorocentrum,109566,FALSE,World Register of Marine Species
+34,37,Pyramimonas,134529,Pyramimonas,134529,FALSE,World Register of Marine Species
+35,39,Stephanopyxis,149630,Stephanopyxis,149630,FALSE,World Register of Marine Species
+36,40,other,NA,NA,NA,FALSE,NA
+37,41,Cerataulina pelagica,149619,Cerataulina pelagica,149619,FALSE,World Register of Marine Species
+38,42,Coscinodiscus,148917,Coscinodiscus,148917,FALSE,World Register of Marine Species
+39,43,Gonyaulax,109519,Gonyaulax,109519,FALSE,World Register of Marine Species
+40,44,Odontella,148963,Odontella,148963,FALSE,World Register of Marine Species
+41,45,Guinardia striata,149113,Guinardia striata,149113,FALSE,World Register of Marine Species
+42,46,Paralia sulcata,149055,Paralia sulcata,149055,FALSE,World Register of Marine Species
+43,48,Hemiaulus,-999,Hemiaulus,956056,TRUE,World Register of Marine Species
+44,49,Chaetoceros didymus,149122,Chaetoceros didymus,149122,FALSE,World Register of Marine Species
+45,50,Leptocylindrus mediterraneus,149230,Leptocylindrus mediterraneus,149230,FALSE,World Register of Marine Species
+46,51,Parvicorbicula socialis,105588,Parvicorbicula socialis,105588,FALSE,World Register of Marine Species
+47,52,Delphineis,149179,Delphineis,149179,FALSE,World Register of Marine Species
+48,53,amoeba,605376,Amoeba,605376,FALSE,World Register of Marine Species
+49,56,Euplotes sp,NA,Euplotes,179326,TRUE,World Register of Marine Species
+50,57,Laboea strobila,101264,Laboea strobila,101264,FALSE,World Register of Marine Species
+51,58,Leegaardiella ovalis,101206,Leegaardiella ovalis,101206,FALSE,World Register of Marine Species
+52,62,Strombidium capitatum,101282,Strombidium capitatum,101282,FALSE,World Register of Marine Species
+53,63,Strombidium conicum,101289,Strombidium conicum,101289,FALSE,World Register of Marine Species
+54,64,Strombidium inclinatum,428332,Strombidium inclinatum,428332,FALSE,World Register of Marine Species
+55,67,Strombidium oculatum,101320,Strombidium oculatum,101320,FALSE,World Register of Marine Species
+56,68,Strombidium wulffi,101344,Strombidium wulffi,101344,FALSE,World Register of Marine Species
+57,69,Tiarina fusus,247943,Tiarina fusus,247943,FALSE,World Register of Marine Species
+58,70,Tintinnida,425497,Tintinnida,425497,FALSE,World Register of Marine Species
+59,71,Tontonia appendiculariformis,101345,Tontonia appendiculariformis,101345,FALSE,World Register of Marine Species
+60,72,Tontonia gracillima,101347,Tontonia gracillima,101347,FALSE,World Register of Marine Species
+61,73,Akashiwo,231787,Akashiwo,231787,FALSE,World Register of Marine Species
+62,75,Bacillaria,149148,Bacillaria,149148,FALSE,World Register of Marine Species
+63,77,Cochlodinium,109474,Cochlodinium,109474,FALSE,World Register of Marine Species
+64,78,Chrysochromulina,115090,Chrysochromulina,115090,FALSE,World Register of Marine Species
+65,79,Emiliania huxleyi,115104,Emiliania huxleyi,115104,FALSE,NCBI
+66,80,Heterocapsa rotundata,110152,Heterocapsa rotundata,110152,FALSE,NCBI
+67,81,Heterocapsa triquetra,110153,Heterocapsa triquetra,110153,FALSE,NCBI
+68,82,Karenia,231788,Karenia,231788,FALSE,World Register of Marine Species
+69,84,Protoperidinium,109553,Protoperidinium,109553,FALSE,World Register of Marine Species
+70,86,Pseudochattonella farcimen,531467,Pseudochattonella farcimen,531467,FALSE,NCBI
+71,87,Pyramimonas longicauda,160513,Pyramimonas longicauda,160513,FALSE,World Register of Marine Species
+72,88,flagellate sp1,NA,NA,NA,FALSE,NA
+73,90,flagellate sp3,NA,NA,NA,FALSE,NA
+74,92,bead,NA,NA,NA,FALSE,NA
+75,93,bubble,NA,NA,NA,FALSE,NA
+76,94,pollen,NA,NA,NA,FALSE,NA
+77,97,camera spot,NA,Camera,484567,TRUE,World Register of Marine Species
+78,26,Corymbellus,162518,Corymbellus,162518,FALSE,World Register of Marine Species
+79,108,Dinophyceae,19542,Dinophyceae,19542,FALSE,World Register of Marine Species
+80,32,Chrysochromulina lanceolata,388470,Chrysochromulina lanceolata,388470,FALSE,World Register of Marine Species
+81,107,Bacillariophyceae,148899,Bacillariophyceae,148899,FALSE,World Register of Marine Species
+82,55,Didinium,341301,Didinium,341301,FALSE,World Register of Marine Species
+83,59,Mesodinium,179320,Mesodinium,179320,FALSE,World Register of Marine Species
+84,60,Pleuronema,NA,Pleuronema,163556,TRUE,World Register of Marine Species
+85,61,Strobilidium,101185,Strobilidium,101185,FALSE,World Register of Marine Species
+86,65,Strombidium sp1,101195,Strombidium,101195,FALSE,World Register of Marine Species
+87,66,Strombidium sp2,101195,Strombidium,101195,FALSE,World Register of Marine Species
+88,74,Amphidinium,109473,Amphidinium,109473,FALSE,World Register of Marine Species
+89,76,Biddulphia,148967,Biddulphia,148967,FALSE,World Register of Marine Species
+90,83,Katodinium or Torodinium,109410,Katodinium,109477,TRUE,World Register of Marine Species
+91,85,Proterythropsis sp,231794,Proterythropsis,231794,FALSE,World Register of Marine Species
+92,98,Balanion,292899,Balanion,292899,FALSE,World Register of Marine Species
+93,100,Eutintinnus,183543,Eutintinnus,183543,FALSE,World Register of Marine Species
+94,101,Favella,172431,Favella,172431,FALSE,World Register of Marine Species
+95,102,Helicostomella subulata,240437,Helicostomella subulata,240437,FALSE,World Register of Marine Species
+96,103,Stenosemella sp1,178825,Stenosemella,178825,FALSE,World Register of Marine Species
+97,104,Stenosemella pacifica,417165,Stenosemella pacifica,417165,FALSE,World Register of Marine Species
+98,105,Tintinnidium mucicola,247944,Tintinnidium mucicola,247944,FALSE,World Register of Marine Species
+99,89,Calciopappus,235858,Calciopappus,235858,FALSE,World Register of Marine Species
+100,112,Syracosphaera pulchra,235979,Syracosphaera pulchra,235979,FALSE,NCBI
+101,110,Apedinella,248096,Apedinella,248096,FALSE,World Register of Marine Species
+102,111,Alexandrium,109470,Alexandrium,109470,FALSE,World Register of Marine Species
+103,109,Vicicitus globosus,146203,Vicicitus globosus,707927,TRUE,NCBI
+104,106,Tintinnopsis,163780,Tintinnopsis,163780,FALSE,World Register of Marine Species
+105,91,pennate morphotype1,NA,NA,NA,FALSE,NA
+106,113,Ophiaster,115081,Ophiaster,115081,FALSE,World Register of Marine Species
+107,54,Ciliate mix,1348,Spirotrichea,1348,TRUE,World Register of Marine Species
+108,47,mix elongated,148899,Bacillariophyceae,148899,TRUE,World Register of Marine Species
+109,24,pennate,148899,Bacillariophyceae,148899,TRUE,World Register of Marine Species
+110,114,Acanthoica quattrospina,235802,Acanthoica quattrospina,235802,FALSE,World Register of Marine Species
+111,115,Radiozoa,582421,Radiozoa,582421,FALSE,World Register of Marine Species
+112,116,Bacteriastrum,149118,Bacteriastrum,149118,FALSE,World Register of Marine Species
+113,96,zooplankton,2,Animalia,2,TRUE,World Register of Marine Species
+114,117,Chaetoceros peruvianis,NA,Chaetoceros peruvianus,178185,TRUE,World Register of Marine Species
+115,118,Chaetoceros debilis,NA,Chaetoceros debilis,149219,TRUE,World Register of Marine Species
+116,119,Chaetoceros curvusetus,149221,Chaetoceros curvisetus,149221,FALSE,World Register of Marine Species
+117,120,Chaetoceros socialis,149123,Chaetoceros socialis,149123,FALSE,World Register of Marine Species
+118,121,Chaetoceros subtilis,156621,Chaetoceros subtilis,156621,FALSE,World Register of Marine Species
+119,122,Chaetoceros danicus,149120,Chaetoceros danicus,149120,FALSE,World Register of Marine Species
+120,123,Chaetoceros concavicornis,156607,Chaetoceros concavicornis,156607,FALSE,World Register of Marine Species
+121,124,Oxytoxum,109528,Oxytoxum,109528,FALSE,World Register of Marine Species
