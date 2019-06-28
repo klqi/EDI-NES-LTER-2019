@@ -20,67 +20,171 @@ Set up taxonomy table built from inputted data set
 ```{r}
 man.data <- read.csv("20190529_classify_classlabel.csv")
 my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
-
 ```
 
+# helper functions used in script 
+```{r}
+# wrapper function to call taxize get_wormsid function and put data into appropriate column 
+acquire_wormsid <- function(resolved_name, counter) {
+  response <- taxize::get_wormsid_(
+    resolved_name,
+    searchtype = 'scientific',
+    accepted = F,
+    ask = F,
+    messages = F
+  )
+  response <- as.data.frame(response)
+  # standardize resolved name to retrieve id
+  resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
+  get.id <- paste(resolved_name, sep='.', "AphiaID")
+  # Pull highest order taxon id
+  resolved_id <- response[1, get.id]
+  man.data$resolved_id[counter] <- resolved_id
+  # sets data_source column if original name could not be resolved through gnr 
+  man.data$data_source[counter] <- "World Register of Marine Species"
+}
 
+
+# retrieves taxon information based on name
+name2taxoninfo <- function(tx_name, counter) {
+  # use worms db to get taxon level
+  taxon_level <- tax_rank(tx_name, db='worms', rows=1)
+  man.data$resolved_taxon_level[counter] <- taxon_level
+  # use taxize classification function to get higher order (class, infraphylum, phylum)
+  hierarchy <- classification(tx_name, db='worms', rows=1)
+  # get class, infraphylum, and phylum
+  hierarchy <- as.data.frame(hierarchy[[1]])
+  class <- hierarchy$name[hierarchy$rank == "Class"]
+  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
+  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
+  
+  # check which of the three main groups tx_name falls under
+  if (class == "Bacillariophyceae") {
+    man.data$resolved_higher_order[counter] <- class
+  } else if (infphy == "Dinoflagellata") {
+    man.data$resolved_higher_order[counter] <- infphy
+  } else if (phylum == "Haptophyta") {
+    man.data$resolved_higher_order[counter] <- phylum
+  } else {
+    man.data$resolved_higher_order[counter] <- "other"
+  }
+}
+
+
+# retrieves taxon info based on id: level, name, and higher order 
+id2taxoninfo <- function(int_id, counter) {
+  # populate taxon_level 
+  taxon_level <- tax_rank(int_id, db='worms', rows=1)
+  man.data$taxon_level[counter] <- taxon_level
+  # populate taxon_name
+  taxon_name <- wm_id2name(id=int_id)
+  man.data$taxon_name[counter] <- taxon_name
+  # populate higher_order
+  hierarchy <- classification(int_id, db='worms', rows=1)
+  # get class, infraphylum, and phylum
+  hierarchy <- as.data.frame(hierarchy[[1]])
+  class <- hierarchy$name[hierarchy$rank == "Class"]
+  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
+  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
+  
+  # check which of the three main groups tx_name falls under
+  if (class == "Bacillariophyceae") {
+    man.data$higher_order[counter] <- "Diatom"
+  } else if (infphy == "Dinoflagellata") {
+    man.data$higher_order[counter] <- "Dinoflagellate"
+  } else if (phylum == "Haptophyta") {
+    man.data$higher_order[counter] <- "Haptophyte"
+  } else {
+    man.data$higher_order[counter] <- "other"
+  }
+
+}
+```
 ## Script for using taxize and worrms packages
 
-```{r}
+```{r, echo=FALSE}
 # Resolve names 
 counter <- 1
+# column names 
 man.data$resolved_names <- NA_character_
-man.data$resolved_id <- NA_character_
-man.data$fixed <- FALSE
+man.data$taxon_level <- NA_character_
+man.data$taxon_name <- NA_character_
+man.data$higher_order <- NA_character_
 man.data$data_source <- NA_character_
+man.data$resolved_id <- NA_character_
+man.data$resolved_taxon_level <- NA_character_
+man.data$resolved_higher_order <- NA_character_
+man.data$name_match <- FALSE
+man.data$id_match <- FALSE
+man.data$higher_match <- FALSE
+man.data$alt_datasource <- NA_character_
+man.data$alt_resolved_name <- NA_character_
+# reorder columns omg this is so dumb why doesn't R have an append function
+man.data[,c("name", "international_id", "resolved_names", "taxon_level", "taxon_name", "higher_order", "data_source", "resolved_id", "resolved_taxon_level", "resolved_higher_order", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
+
+# loop through all rows
 for (row in 1:nrow(man.data)) {
+  # first try to resolve the name with gnr
   temp <- gnr_resolve(names = as.vector(man.data$name[counter]),  canonical = T,
                       best_match_only = T, preferred_data_sources = c(9, 4))
-  # check if resolved
+  # set primary data source
+  primary_ds <- "World Register of Marine Species"
+  # check if able to resolve name 
   if (!empty(temp)) {
     # add to resolved_names column
     resolved_name <- unlist(temp[1, 'matched_name2'])
-    authority <- unlist(temp[1, 'data_source_title'])
     man.data$resolved_names[counter] <- resolved_name
-    man.data$data_source[counter] <- authority
-    # edge case: check if international_id exists in column
-    if (man.data$international_id[counter] == -999 | is.na(man.data$international_id[counter])) {
-      # man.data$resolved_id[counter] <- wm_name2id(name=unlist(man.data$resolved_names[counter]))
-      response <- taxize::get_wormsid_(
-        resolved_name,
-        searchtype = 'scientific',
-        accepted = F,
-        ask = F,
-        messages = F
-      )
-      response <- as.data.frame(response)
-      resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
-      get.id <- paste(resolved_name, sep='.', "AphiaID")
-      resolved_id <- response[1, get.id]
-      man.data$resolved_id[counter] <- resolved_id
-      man.data$fixed[counter] <- TRUE
-      man.data$data_source[counter] <- "World Register of Marine Species"
+    # add to data_source or alt_ds column
+    authority <- unlist(temp[1, 'data_source_title'])
+    # add to data_source if WORMs or alt_ds for other 
+    if (authority == primary_ds) {
+      man.data$data_source[counter] <- authority
     } else {
-      # check worm ids with resolved names 
-      test_name <- wm_id2name(id=man.data$international_id[counter])
-      if (test_name == man.data$resolved_names[counter]) {
-        # fill in with id from original international_id
-        man.data$resolved_id[counter] <- man.data$international_id[counter]
-      } else {
-        # else fill in with id from resolved name
-        man.data$resolved_id[counter] <- wm_name2id(name=unlist(man.data$resolved_names[counter]))
-        man.data$fixed[counter] <- TRUE
+      man.data$alt_datasource[counter] <- authority
+      man.data$alt_resolved_names[counter] <- resolved_name
+    }
+    
+    # edge case: check if international_id does not exist in input file() taxon_level, name, higher order are false)
+    if (man.data$international_id[counter] == -999 | is.na(man.data$international_id[counter])) {
+      # call helper function to retrieve worms ID from resolved name 
+      acquire_wormsid(resolved_name, counter)
+      # retrieve taxon level from resolved_name
+      name2taxoninfo(resolved_name, counter)
+      # higher_match, id_match, and name_match remain false as original ID did not exist
+      
+    }
+    # else internation_id does exist in input file
+    else {
+      # call helper function to retrieve taxon info from id
+      id2taxoninfo(man.data$international_id[counter], counter)
+      # call helper function to retrieve taxon info from resolved_name 
+      name2taxoninfo(resolved_name, counter)
+      
+      # check if taxon name matches with resolved
+      if (man.data$taxon_name[counter] == man.data$resolved_names[counter]) {
+        # set name_match to true
+        man.data$name_match[counter] <- TRUE
+      }
+      # check if id matches with resolved
+      if (man.data$international_id[counter] == man.data$resolved_id[counter]) {
+        # set id_match to true
+        man.data$id_match[counter] <- TRUE
+      }
+      # check if higher order matches with resolved
+      if (man.data$higher_order[counter] == man.data$resolved_higher_order[counter]) {
+        man.data$higher_match[counter] <- TRUE
       }
     }
   } else {
-    # else fill with NA 
+    # gnr unable to resolve by name, fill with NA 
     man.data$resolved_names[counter] <- NA_character_
     # check if international id is not empty for row 
     if(!is.na(man.data$international_id[counter])) {
-      # check if id is same as manual
-      test_name <- wm_id2name(id=man.data$international_id[counter])
-      man.data$resolved_names[counter] <- test_name
-      if (test_name == man.data$name[counter]) {
+      # set taxon name from international id
+      taxon_name <- wm_id2name(id=man.data$international_id[counter])
+      man.data$taxon_name[counter] <- taxon_name
+      # check if name returned from international id is valid 
+      if (taxon_name == man.data$name[counter]) {
         # set resolved id to international id
         man.data$resolved_id[counter] <- man.data$international_id[counter]
         man.data$data_source[counter] <- "World Register of Marine Species"
@@ -103,7 +207,7 @@ for (row in 1:nrow(man.data)) {
           man.data$resolved_id[counter] <- resolved_id
           # set resolved name tfdo resolved test_name
           man.data$resolved_names[counter] <- test_name
-          man.data$fixed[counter] <- TRUE
+          man.data$resolved_id[counter] <- TRUE
           man.data$data_source[counter] <- "World Register of Marine Species"
         }
       }
@@ -128,7 +232,7 @@ for (row in 1:nrow(man.data)) {
         man.data$resolved_id[counter] <- resolved_id
         # set resolved name tfdo resolved test_name
         man.data$resolved_names[counter] <- test_name
-        man.data$fixed[counter] <- TRUE
+        man.data$resolved_id[counter] <- TRUE
         man.data$data_source[counter] <- "World Register of Marine Species"
       }
     }
