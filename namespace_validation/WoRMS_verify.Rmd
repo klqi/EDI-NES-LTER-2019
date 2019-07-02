@@ -21,6 +21,7 @@ Run functions first to be able to use them in script (last chunk)- clean up late
 
 ```{r}
 # local development only
+rm(list=ls())
 setwd("~/Desktop/WHOI_LTER/projects/namespace_validation/")
 #man.data <- read.csv(file.choose())
 man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
@@ -45,6 +46,7 @@ acquire_wormsid <- function(resolved_name, counter, man.data) {
   if (!empty(response)) {
     # standardize resolved name to retrieve id
     resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
+    resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
     get.id <- paste(resolved_name, sep='.', "AphiaID")
     # Pull highest order taxon id
     resolved_id <- response[1, get.id]
@@ -94,10 +96,10 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   # get id, class, infraphylum, and phylum
   hierarchy <- as.data.frame(hierarchy[[1]])
   # only set resolved id in the case that the resolved id doesn't exist yet
-  if (is.na(man.data$resolved_higher_order[counter])) {
-    taxon_level <- tools::toTitleCase(taxon_level)
-    man.data$resolved_id[counter] <<- hierarchy$id[hierarchy$rank == taxon_level]
-  }
+  # if (is.na(man.data$resolved_higher_order[counter])) {
+  #   taxon_level <- tools::toTitleCase(taxon_level)
+  #   man.data$resolved_id[counter] <<- hierarchy$id[hierarchy$rank == taxon_level]
+  # }
   class <- hierarchy$name[hierarchy$rank == "Class"]
   infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
   phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
@@ -169,10 +171,11 @@ for (row in 1:nrow(man.data)) {
       # retrieve taxon level from resolved_name
       name2taxoninfo(resolved_name, counter, man.data)
       # higher_match, id_match, and name_match remain false as original ID did not exist
-      
     }
     # else internation_id does exist in input file
     else {
+      # set resolved_id from resolved_name
+      acquire_wormsid(resolved_name, counter, man.data)
       # call helper function to retrieve taxon info from id
       id2taxoninfo(man.data$international_id[counter], counter, man.data)
       # call helper function to retrieve taxon info from resolved_name 
