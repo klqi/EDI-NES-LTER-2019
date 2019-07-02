@@ -44,7 +44,7 @@
 "43",48,"Hemiaulus",-999,"Hemiaulus",NA,NA,NA,"World Register of Marine Species","956056","genus","Diatom",FALSE,FALSE,FALSE,NA,NA
 "44",49,"Chaetoceros didymus",149122,"Chaetoceros didymus","species","Chaetoceros didymus","Diatom","World Register of Marine Species","149122","species","Diatom",TRUE,TRUE,TRUE,NA,NA
 "45",50,"Leptocylindrus mediterraneus",149230,"Leptocylindrus mediterraneus","species","Leptocylindrus mediterraneus","Diatom","World Register of Marine Species","149230","species","Diatom",TRUE,TRUE,TRUE,NA,NA
-"46",51,"Parvicorbicula socialis",105588,NA,"species","Parvicorbicula socialis","other",NA,"105588",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"46",51,"Parvicorbicula socialis",105588,NA,"species","Parvicorbicula socialis","other","World Register of Marine Species","105588",NA,NA,FALSE,FALSE,FALSE,NA,NA
 "47",52,"Delphineis",149179,"Delphineis","genus","Delphineis","Diatom","World Register of Marine Species","149179","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
 "48",53,"amoeba",605376,"Amoeba","genus","Amoeba","other","World Register of Marine Species","605376","genus","other",TRUE,TRUE,TRUE,NA,NA
 "49",56,"Euplotes sp",NA,"Euplotes",NA,NA,NA,"World Register of Marine Species","179326","genus","other",FALSE,FALSE,FALSE,NA,NA
@@ -63,13 +63,13 @@
 "62",75,"Bacillaria",149148,"Bacillaria","genus","Bacillaria","Diatom","World Register of Marine Species","149148","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
 "63",77,"Cochlodinium",109474,"Cochlodinium","genus","Cochlodinium","Dinoflagellate","World Register of Marine Species","109474","genus","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
 "64",78,"Chrysochromulina",115090,"Chrysochromulina","genus","Chrysochromulina","Haptophyte","World Register of Marine Species","115090","genus","Haptophyte",TRUE,TRUE,TRUE,NA,NA
-"65",79,"Emiliania huxleyi",115104,"Emiliania huxleyi","species","Emiliania huxleyi","Haptophyte",NA,"115104","species","Haptophyte",TRUE,TRUE,TRUE,"NCBI","Emiliania huxleyi"
-"66",80,"Heterocapsa rotundata",110152,"Heterocapsa rotundata","species","Heterocapsa rotundata","Dinoflagellate",NA,"110152","species","Dinoflagellate",TRUE,TRUE,TRUE,"NCBI","Heterocapsa rotundata"
-"67",81,"Heterocapsa triquetra",110153,"Heterocapsa triquetra","species","Heterocapsa triquetra","Dinoflagellate",NA,"110153","species","Dinoflagellate",TRUE,TRUE,TRUE,"NCBI","Heterocapsa triquetra"
+"65",79,"Emiliania huxleyi",115104,"Emiliania huxleyi","species","Emiliania huxleyi","Haptophyte","World Register of Marine Species","115104","species","Haptophyte",TRUE,TRUE,TRUE,"NCBI","Emiliania huxleyi"
+"66",80,"Heterocapsa rotundata",110152,"Heterocapsa rotundata","species","Heterocapsa rotundata","Dinoflagellate","World Register of Marine Species","110152","species","Dinoflagellate",TRUE,TRUE,TRUE,"NCBI","Heterocapsa rotundata"
+"67",81,"Heterocapsa triquetra",110153,"Heterocapsa triquetra","species","Heterocapsa triquetra","Dinoflagellate","World Register of Marine Species","110153","species","Dinoflagellate",TRUE,TRUE,TRUE,"NCBI","Heterocapsa triquetra"
 "68",82,"Karenia",231788,"Karenia","genus","Karenia","Dinoflagellate","World Register of Marine Species","231788","genus","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
 "69",84,"Protoperidinium",109553,"Protoperidinium","genus","Protoperidinium","Dinoflagellate","World Register of Marine Species","109553","genus","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
-"70",86,"Pseudochattonella farcimen",531467,"Pseudochattonella farcimen","species","Pseudochattonella farcimen","other",NA,"531467","species","other",TRUE,TRUE,TRUE,"NCBI","Pseudochattonella farcimen"
-"71",87,"Pyramimonas longicauda",160513,NA,"species","Pyramimonas longicauda","other",NA,"160513",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"70",86,"Pseudochattonella farcimen",531467,"Pseudochattonella farcimen","species","Pseudochattonella farcimen","other","World Register of Marine Species","531467","species","other",TRUE,TRUE,TRUE,"NCBI","Pseudochattonella farcimen"
+"71",87,"Pyramimonas longicauda",160513,NA,"species","Pyramimonas longicauda","other","World Register of Marine Species","160513",NA,NA,FALSE,FALSE,FALSE,NA,NA
 "72",88,"flagellate sp1",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "73",90,"flagellate sp3",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "74",92,"bead",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
@@ -78,7 +78,7 @@
 "77",97,"camera spot",NA,"Camera",NA,NA,NA,"World Register of Marine Species","484567","species","other",FALSE,FALSE,FALSE,"NCBI","Camera"
 "78",26,"Corymbellus",162518,"Corymbellus","genus","Corymbellus","Haptophyte","World Register of Marine Species","162518","species","Haptophyte",TRUE,TRUE,TRUE,NA,NA
 "79",108,"Dinophyceae",19542,"Dinophyceae","class","Dinophyceae","Dinoflagellate","World Register of Marine Species","19542","class","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
-"80",32,"Chrysochromulina lanceolata",388470,NA,"species","Chrysochromulina lanceolata","Haptophyte",NA,"388470",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"80",32,"Chrysochromulina lanceolata",388470,NA,"species","Chrysochromulina lanceolata","Haptophyte","World Register of Marine Species","388470",NA,NA,FALSE,FALSE,FALSE,NA,NA
 "81",107,"Bacillariophyceae",148899,"Bacillariophyceae","class","Bacillariophyceae","Diatom","World Register of Marine Species","148899","class","Diatom",TRUE,TRUE,TRUE,NA,NA
 "82",55,"Didinium",341301,"Didinium","genus","Didinium","other","World Register of Marine Species","341301","genus","other",TRUE,TRUE,TRUE,NA,NA
 "83",59,"Mesodinium",179320,"Mesodinium","genus","Mesodinium","other","World Register of Marine Species","179320","genus","other",TRUE,TRUE,TRUE,NA,NA
@@ -98,20 +98,20 @@
 "97",104,"Stenosemella pacifica",417165,"Stenosemella pacifica","species","Stenosemella pacifica","other","World Register of Marine Species","417165","species","other",TRUE,TRUE,TRUE,NA,NA
 "98",105,"Tintinnidium mucicola",247944,"Tintinnidium mucicola","species","Tintinnidium mucicola","other","World Register of Marine Species","247944","species","other",TRUE,TRUE,TRUE,NA,NA
 "99",89,"Calciopappus",235858,"Calciopappus","genus","Calciopappus","Haptophyte","World Register of Marine Species","235858","species","Haptophyte",TRUE,TRUE,TRUE,NA,NA
-"100",112,"Syracosphaera pulchra",235979,"Syracosphaera pulchra","species","Syracosphaera pulchra","Haptophyte",NA,"235979","species","Haptophyte",TRUE,TRUE,TRUE,"NCBI","Syracosphaera pulchra"
+"100",112,"Syracosphaera pulchra",235979,"Syracosphaera pulchra","species","Syracosphaera pulchra","Haptophyte","World Register of Marine Species","235979","species","Haptophyte",TRUE,TRUE,TRUE,"NCBI","Syracosphaera pulchra"
 "101",110,"Apedinella",248096,"Apedinella","genus","Apedinella","other","World Register of Marine Species","248096","species","other",TRUE,TRUE,TRUE,NA,NA
 "102",111,"Alexandrium",109470,"Alexandrium","genus","Alexandrium","Dinoflagellate","World Register of Marine Species","109470","genus","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
-"103",109,"Vicicitus globosus",146203,"Vicicitus globosus","infraphylum","Dinoflagellata","Dinoflagellate",NA,"146203","species","other",FALSE,TRUE,FALSE,"NCBI","Vicicitus globosus"
+"103",109,"Vicicitus globosus",146203,"Vicicitus globosus","infraphylum","Dinoflagellata","Dinoflagellate","World Register of Marine Species","146203","species","other",FALSE,TRUE,FALSE,"NCBI","Vicicitus globosus"
 "104",106,"Tintinnopsis",163780,"Tintinnopsis","genus","Tintinnopsis","other","World Register of Marine Species","163780","genus","other",TRUE,TRUE,TRUE,NA,NA
 "105",91,"pennate morphotype1",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "106",113,"Ophiaster",115081,"Ophiaster","genus","Ophiaster","Haptophyte","World Register of Marine Species","115081","genus","Haptophyte",TRUE,TRUE,TRUE,NA,NA
-"107",54,"Ciliate mix",1348,NA,"class","Spirotrichea","other",NA,"1348",NA,NA,FALSE,FALSE,FALSE,NA,NA
-"108",47,"mix elongated",148899,NA,"class","Bacillariophyceae","Diatom",NA,"148899",NA,NA,FALSE,FALSE,FALSE,NA,NA
-"109",24,"pennate",148899,NA,"class","Bacillariophyceae","Diatom",NA,"148899",NA,NA,FALSE,FALSE,FALSE,NA,NA
-"110",114,"Acanthoica quattrospina",235802,NA,"species","Acanthoica quattrospina","Haptophyte",NA,"235802",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"107",54,"Ciliate mix",1348,NA,"class","Spirotrichea","other","World Register of Marine Species","1348",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"108",47,"mix elongated",148899,NA,"class","Bacillariophyceae","Diatom","World Register of Marine Species","148899",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"109",24,"pennate",148899,NA,"class","Bacillariophyceae","Diatom","World Register of Marine Species","148899",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"110",114,"Acanthoica quattrospina",235802,NA,"species","Acanthoica quattrospina","Haptophyte","World Register of Marine Species","235802",NA,NA,FALSE,FALSE,FALSE,NA,NA
 "111",115,"Radiozoa",582421,"Radiozoa","phylum","Radiozoa","other","World Register of Marine Species","582421","class","other",TRUE,TRUE,TRUE,NA,NA
 "112",116,"Bacteriastrum",149118,"Bacteriastrum","genus","Bacteriastrum","Diatom","World Register of Marine Species","149118","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
-"113",96,"zooplankton",2,NA,"kingdom","Animalia","other",NA,"2",NA,NA,FALSE,FALSE,FALSE,NA,NA
+"113",96,"zooplankton",2,NA,"kingdom","Animalia","other","World Register of Marine Species","2",NA,NA,FALSE,FALSE,FALSE,NA,NA
 "114",117,"Chaetoceros peruvianis",NA,"Chaetoceros peruvianus",NA,NA,NA,"World Register of Marine Species","178185","species","Diatom",FALSE,FALSE,FALSE,NA,NA
 "115",118,"Chaetoceros debilis",NA,"Chaetoceros debilis",NA,NA,NA,"World Register of Marine Species","149219","species","Diatom",FALSE,FALSE,FALSE,NA,NA
 "116",119,"Chaetoceros curvusetus",149221,"Chaetoceros curvisetus","species","Chaetoceros curvisetus","Diatom","World Register of Marine Species","149221","species","Diatom",TRUE,TRUE,TRUE,NA,NA

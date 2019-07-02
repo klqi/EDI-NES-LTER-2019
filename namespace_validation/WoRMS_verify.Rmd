@@ -17,6 +17,7 @@ library(tcltk)
 
 ## R Markdown
 Set up taxonomy table built from inputted data set 
+Run functions first to be able to use them in script (last chunk)- clean up later
 
 ```{r}
 # local development only
@@ -28,8 +29,97 @@ my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
 ```
 
 
-## Script for using taxize and worrms packages
+# helper functions used in script 
+```{r}
+# wrapper function to call taxize get_wormsid function and put data into appropriate column 
+acquire_wormsid <- function(resolved_name, counter, man.data) {
+  response <- taxize::get_wormsid_(
+    resolved_name,
+    searchtype = 'scientific',
+    accepted = F,
+    ask = F,
+    messages = F
+  )
+  # check if name was able to return an id from worms
+  response <- as.data.frame(response)
+  if (!empty(response)) {
+    # standardize resolved name to retrieve id
+    resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
+    get.id <- paste(resolved_name, sep='.', "AphiaID")
+    # Pull highest order taxon id
+    resolved_id <- response[1, get.id]
+    man.data$resolved_id[counter] <<- resolved_id
+    # sets data_source column if original name could not be resolved through gnr 
+    man.data$data_source[counter] <<- "World Register of Marine Species"
+  } # else leave columns with original NA values
+}
 
+
+# retrieves taxon information based on name
+name2taxoninfo <- function(tx_name, counter, man.data) {
+  # use worms db to get taxon level
+  taxon_level <- unlist(tax_rank(tx_name, db='worms', rows=1))
+  man.data$resolved_taxon_level[counter] <<- taxon_level
+  # use taxize classification function to get higher order (class, infraphylum, phylum)
+  hierarchy <- taxize::classification(tx_name, db='worms', rows=1)
+  # get class, infraphylum, and phylum
+  hierarchy <- as.data.frame(hierarchy[[1]])
+  class <- hierarchy$name[hierarchy$rank == "Class"]
+  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
+  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
+  
+  # check which of the three main groups tx_name falls under
+  if (!identical(character(0), class) && class == "Bacillariophyceae") {
+      man.data$resolved_higher_order[counter] <<- "Diatom"
+  } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
+      man.data$resolved_higher_order[counter] <<- "Dinoflagellate"
+  } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
+      man.data$resolved_higher_order[counter] <<- "Haptophyte"
+  } else {
+      man.data$resolved_higher_order[counter] <<- "other"
+    }
+}
+
+
+# retrieves taxon info based on id: level, name, and higher order 
+id2taxoninfo <- function(int_id, counter, man.data) {
+  # populate taxon_level 
+  taxon_level <- unlist(tax_rank(int_id, db='worms', rows=1))
+  man.data$taxon_level[counter] <<- taxon_level
+  # populate taxon_name
+  taxon_name <- wm_id2name(id=int_id)
+  man.data$taxon_name[counter] <<- taxon_name
+  # populate higher_order
+  hierarchy <- classification(int_id, db='worms', rows=1)
+  # get id, class, infraphylum, and phylum
+  hierarchy <- as.data.frame(hierarchy[[1]])
+  # only set resolved id in the case that the resolved id doesn't exist yet
+  if (is.na(man.data$resolved_higher_order[counter])) {
+    taxon_level <- tools::toTitleCase(taxon_level)
+    man.data$resolved_id[counter] <<- hierarchy$id[hierarchy$rank == taxon_level]
+  }
+  class <- hierarchy$name[hierarchy$rank == "Class"]
+  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
+  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
+  
+  # check which of the three main groups tx_name falls under
+  if (!identical(character(0), class) && class == "Bacillariophyceae") {
+    man.data$higher_order[counter] <<- "Diatom"
+  } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
+    man.data$higher_order[counter] <<- "Dinoflagellate"
+  } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
+    man.data$higher_order[counter] <<- "Haptophyte"
+  } else {
+    man.data$higher_order[counter] <<- "other"
+  }
+  
+  # sets data_source column if original name could not be resolved through gnr 
+  man.data$data_source[counter] <<- "World Register of Marine Species"
+}
+```
+
+
+## Script for using taxize and worrms packages
 ```{r, echo=FALSE, include=FALSE}
 # Resolve names 
 counter <- 1
@@ -142,91 +232,4 @@ worms_verified <- man.data$name[!is.na(man.data$resolved_id)]
 
 #convert to csv file 
 write.csv(man.data, my_path)
-```
-
-
-# helper functions used in script 
-```{r}
-# wrapper function to call taxize get_wormsid function and put data into appropriate column 
-acquire_wormsid <- function(resolved_name, counter, man.data) {
-  response <- taxize::get_wormsid_(
-    resolved_name,
-    searchtype = 'scientific',
-    accepted = F,
-    ask = F,
-    messages = F
-  )
-  # check if name was able to return an id from worms
-  response <- as.data.frame(response)
-  if (!empty(response)) {
-    # standardize resolved name to retrieve id
-    resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
-    get.id <- paste(resolved_name, sep='.', "AphiaID")
-    # Pull highest order taxon id
-    resolved_id <- response[1, get.id]
-    man.data$resolved_id[counter] <<- resolved_id
-    # sets data_source column if original name could not be resolved through gnr 
-    man.data$data_source[counter] <<- "World Register of Marine Species"
-  } # else leave columns with original NA values
-}
-
-
-# retrieves taxon information based on name
-name2taxoninfo <- function(tx_name, counter, man.data) {
-  # use worms db to get taxon level
-  taxon_level <- unlist(tax_rank(tx_name, db='worms', rows=1))
-  man.data$resolved_taxon_level[counter] <<- taxon_level
-  # use taxize classification function to get higher order (class, infraphylum, phylum)
-  hierarchy <- taxize::classification(tx_name, db='worms', rows=1)
-  # get class, infraphylum, and phylum
-  hierarchy <- as.data.frame(hierarchy[[1]])
-  class <- hierarchy$name[hierarchy$rank == "Class"]
-  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
-  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
-  
-  # check which of the three main groups tx_name falls under
-  if (!identical(character(0), class) && class == "Bacillariophyceae") {
-      man.data$resolved_higher_order[counter] <<- "Diatom"
-  } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
-      man.data$resolved_higher_order[counter] <<- "Dinoflagellate"
-  } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
-      man.data$resolved_higher_order[counter] <<- "Haptophyte"
-  } else {
-      man.data$resolved_higher_order[counter] <<- "other"
-    }
-}
-
-
-# retrieves taxon info based on id: level, name, and higher order 
-id2taxoninfo <- function(int_id, counter, man.data) {
-  # populate taxon_level 
-  taxon_level <- unlist(tax_rank(int_id, db='worms', rows=1))
-  man.data$taxon_level[counter] <<- taxon_level
-  # populate taxon_name
-  taxon_name <- wm_id2name(id=int_id)
-  man.data$taxon_name[counter] <<- taxon_name
-  # populate higher_order
-  hierarchy <- classification(int_id, db='worms', rows=1)
-  # get id, class, infraphylum, and phylum
-  hierarchy <- as.data.frame(hierarchy[[1]])
-  # only set resolved id in the case that the resolved id doesn't exist yet
-  if (is.na(man.data$resolved_higher_order[counter])) {
-    taxon_level <- tools::toTitleCase(taxon_level)
-    man.data$resolved_id[counter] <<- hierarchy$id[hierarchy$rank == taxon_level]
-  }
-  class <- hierarchy$name[hierarchy$rank == "Class"]
-  infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
-  phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
-  
-  # check which of the three main groups tx_name falls under
-  if (!identical(character(0), class) && class == "Bacillariophyceae") {
-    man.data$higher_order[counter] <<- "Diatom"
-  } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
-    man.data$higher_order[counter] <<- "Dinoflagellate"
-  } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
-    man.data$higher_order[counter] <<- "Haptophyte"
-  } else {
-    man.data$higher_order[counter] <<- "other"
-  }
-}
 ```
