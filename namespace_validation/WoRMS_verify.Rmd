@@ -12,6 +12,7 @@ library(taxize)
 library(worrms)
 library(plyr)
 library(dplyr)
+library(tcltk)
 ```
 
 ## R Markdown
@@ -20,7 +21,9 @@ Set up taxonomy table built from inputted data set
 ```{r}
 # local development only
 setwd("~/Desktop/WHOI_LTER/projects/namespace_validation/")
-man.data <- read.csv("20190529_classify_classlabel.csv")
+#man.data <- read.csv(file.choose())
+man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
+#man.data <- read.csv("20190529_classify_classlabel.csv")
 my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
 ```
 
