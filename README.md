@@ -8,6 +8,7 @@ Includes Python and R scripts for data analysis and publication:
 auto_join (currently under local development):
     This includes a Python script (auto_extract.py) that creates a file 1_b prototype that can be used for 
     analysis of features and classes from the automatic classifier.
+    
     Dependencies and Requirements:
         - Python 3.6
         - Pandas
@@ -21,6 +22,7 @@ namespace_validation (local development):
     groups to the WoRMS database (primary) or NCBI (secondary). It generates an output csv file with the 
     original and corrected information that can be manually edited for name space development for 
     further analysis. 
+    
     Dependencies and Requirements:
         - R/RStudio
         - taxize
@@ -40,6 +42,7 @@ geographic_validation (local development):
     inputted distance from the reference longitudinal line (station 5). The
     html file generated is a leaflet map with the entire sample set (green), the good
     transect subset (purple), and the original transect subset (yellow). 
+    
     Dependencies and Requirements:
         - Python 3.6
         - Pandas
