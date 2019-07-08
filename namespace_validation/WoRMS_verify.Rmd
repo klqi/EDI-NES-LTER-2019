@@ -120,6 +120,16 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   # sets data_source column if original name could not be resolved through gnr 
   man.data$data_source[counter] <<- "World Register of Marine Species"
 }
+
+# helper function to fill in information for abiotic classes
+is_abiotic <- function(name, counter) {
+  if (name == "bad" | name == "detritus" | name == "bead" | name == "bubble" | name == "pollen" | name == "camera spot") {
+    man.data$alt_datasource[counter] <<- "OCB"
+    man.data$alt_resolved_name[counter] <<- toString(name)
+    return(TRUE)
+  }
+  return(FALSE)
+}
 ```
 
 
@@ -146,7 +156,13 @@ man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", 
 
 # loop through all rows
 for (row in 1:nrow(man.data)) {
-  # first try to resolve the name with gnr
+  # first check if name is abiotic
+  if (is_abiotic(man.data$name[counter], counter)) {
+    # skip to next row if true
+    counter <- counter + 1
+    next
+  }
+  # try to resolve the name with gnr
   temp <- gnr_resolve(names = as.vector(man.data$name[counter]),  canonical = T,
                       best_match_only = T, preferred_data_sources = c(9, 4))
   # set primary data source

@@ -20,8 +20,8 @@
 "19",19,"Skeletonema",149073,"Skeletonema","genus","Skeletonema","Diatom","World Register of Marine Species","149073","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
 "20",20,"Thalassionema",149092,"Thalassionema","genus","Thalassionema","Diatom","World Register of Marine Species","149092","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
 "21",21,"Thalassiosira",148912,"Thalassiosira","genus","Thalassiosira","Diatom","World Register of Marine Species","148912","genus","Diatom",TRUE,TRUE,TRUE,NA,NA
-"22",22,"bad",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
-"23",23,"detritus",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
+"22",22,"bad",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","bad"
+"23",23,"detritus",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","detritus"
 "24",25,"mix",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "25",27,"cryptophyta",17638,"Cryptophyta","phylum","Cryptophyta","other","World Register of Marine Species","17638","phylum","other",TRUE,TRUE,TRUE,NA,NA
 "26",28,"Dinophysis",109462,"Dinophysis","genus","Dinophysis","Dinoflagellate","World Register of Marine Species","109462","genus","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
@@ -72,10 +72,10 @@
 "71",87,"Pyramimonas longicauda",160513,NA,"species","Pyramimonas longicauda","other","World Register of Marine Species",NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "72",88,"flagellate sp1",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
 "73",90,"flagellate sp3",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
-"74",92,"bead",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
-"75",93,"bubble",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
-"76",94,"pollen",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
-"77",97,"camera spot",NA,"Camera",NA,NA,NA,"World Register of Marine Species","484567","species","other",FALSE,FALSE,FALSE,"NCBI","Camera"
+"74",92,"bead",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","bead"
+"75",93,"bubble",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","bubble"
+"76",94,"pollen",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","pollen"
+"77",97,"camera spot",NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,FALSE,"OCB","camera spot"
 "78",26,"Corymbellus",162518,"Corymbellus","genus","Corymbellus","Haptophyte","World Register of Marine Species","162519","species","Haptophyte",TRUE,FALSE,TRUE,NA,NA
 "79",108,"Dinophyceae",19542,"Dinophyceae","class","Dinophyceae","Dinoflagellate","World Register of Marine Species","19542","class","Dinoflagellate",TRUE,TRUE,TRUE,NA,NA
 "80",32,"Chrysochromulina lanceolata",388470,NA,"species","Chrysochromulina lanceolata","Haptophyte","World Register of Marine Species",NA,NA,NA,FALSE,FALSE,FALSE,NA,NA
