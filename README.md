@@ -47,5 +47,7 @@ geographic_validation (local development):
         - Python 3.6
         - Pandas
         - folium
-        - geopy.distance
+        - geopy
+        - ssl
+        - urllib
         - Internet
