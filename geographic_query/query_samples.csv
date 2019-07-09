@@ -65,6 +65,7 @@ date,new_pid,old_pids
 2018-02-02 21:25:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T212443_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T212443_IFCB102
 2018-02-02 21:48:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T214732_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T214732_IFCB102
 2018-02-03 02:44:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T024407_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T024407_IFCB102
+2018-02-03 07:37:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T073635_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T073635_IFCB102
 2018-02-03 07:59:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T075856_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T075856_IFCB102
 2018-02-03 08:21:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T082118_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T082118_IFCB102
 2018-02-03 08:44:00+00:00,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T084339_IFCB102,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T084339_IFCB102
@@ -133,7 +134,6 @@ date,new_pid,old_pids
 2018-02-02 15:20:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T151941_IFCB102
 2018-02-02 17:37:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T173634_IFCB102
 2018-02-02 21:02:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180202T210154_IFCB102
-2018-02-03 07:37:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T073635_IFCB102
 2018-02-03 09:51:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T095043_IFCB102
 2018-02-03 10:58:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T105748_IFCB102
 2018-02-03 11:20:00+00:00,,http://ifcb-data.whoi.edu/NESLTER_transect/D20180203T112009_IFCB102
