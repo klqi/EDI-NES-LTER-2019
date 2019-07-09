@@ -3,15 +3,21 @@
 # File header: Tool to check given files to verify whether given samples are
 # valid within the complete transect line. Also can choose certain samples
 # within a certain distance to output to a separate csv file
+# Still under local development so needs clean up to accomodate more user
+# interaction
 
 import pandas as pd
 import folium
 import geopy.distance
+import ssl
+import urllib
 
-# files to check
 all_samples_file = "NESLTER_transect_EN608_Jan2018_ifcb_locations.csv"
 subset_file = "IFCB_count_manual_transect_winter_2018_20190530.csv"
-underway_file = "en608_underway.csv"
+# for online access
+ssl._create_default_https_context = ssl._create_unverified_context
+underway_file = "https://nes-lter-data.whoi.edu/api/underway/en608.csv"
+urllib.request.urlopen(underway_file)
 # coordinates for station 5
 st5 = (40.5133, -70.8833)
 st5_long = -70.8833
@@ -110,17 +116,17 @@ joes_samples = joes_samples.replace(r'^\s*$', "NA", regex=True)
 joes_samples.rename(columns={'pid': 'old_pids'}, inplace=True)
 # plot coordinates from oriignla subset sample onto map- quality check portion
 counter = 0
-for row in subset_samples.iterrows():
+'''for row in subset_samples.iterrows():
     lat = subset_samples.latitude[counter]
     long = subset_samples.longitude[counter]
     counter += 1
     # get coordinates
     coords = (lat, long)
     # Add marker to original subset coordinates
-    folium.CircleMarker(coords, radius=1, color='purple').add_to(map)
+    folium.CircleMarker(coords, radius=1, color='purple').add_to(map)'''
 # save map
 map.save("mymap.html")
-# save information to csv files
+# save information to csv files, comment out as necessary
 good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
 subset_samples.to_csv("transect_subset.csv", index=None, header=True)
 all_samples.to_csv("comparison.csv", index=None, header=True)
