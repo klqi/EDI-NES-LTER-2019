@@ -3,7 +3,7 @@
 # File header: Tool to check given files to verify whether given samples are
 # valid within the complete transect line. Also can choose certain samples
 # within a certain distance to output to a separate csv file
-# Requirements: pandas, folium, geopy.distance, request, ssl
+# Requirements: pandas, folium, geopy.distance, request, ssl, internet
 # Still under local development so needs clean up to accomodate more user
 # interaction
 
@@ -47,6 +47,8 @@ col = ['date', 'new_pid']
 good_samples = pd.DataFrame(columns=columns)
 # only includes data from underway for query
 joes_samples = pd.DataFrame(columns=col)
+# bad sample name
+bad_IFCB = "IFCB109"
 # prompt user input to specify distance from longitude
 ref_dist = float(input('Please enter an distance (km): '))
 counter = 0
@@ -71,6 +73,7 @@ for row in all_samples.iterrows():
     # get sample identifier from last 24 characters of pid string
     whole = all_samples.pid[counter]
     cut = whole[-24:]
+    check_IFCB = whole[-7:]
     all_samples.key[counter] = cut
     # only plot marker if sample is 1 km east/west from station 5
     dist = geopy.distance.geodesic(ref_coord, coords).km
@@ -79,7 +82,7 @@ for row in all_samples.iterrows():
     off_dist = geopy.distance.geodesic(ucoords, coords).m
     all_samples.offset[counter] = off_dist
     # if both coordinates are within the ref_dist range
-    if (dist <= ref_dist and udist <= ref_dist):
+    if (dist <= ref_dist and udist <= ref_dist and check_IFCB != bad_IFCB):
         # make purple marker for good sample points
         # folium.CircleMarker(coords, radius=1, color='purple').add_to(map)
         folium.CircleMarker(ucoords, radius=1, color='yellow').add_to(map)
@@ -98,7 +101,7 @@ for row in all_samples.iterrows():
         # keep track of counter
         index += 1
     # if only gps_furno coordinates are within ref_dist range
-    elif (dist > ref_dist and udist <= ref_dist):
+    elif (dist > ref_dist and udist <= ref_dist and check_IFCB != bad_IFCB):
         # make purple marker for good sample points
         folium.CircleMarker(ucoords, radius=1, color='yellow').add_to(map)
         # put into coordinates with sample identifier in dataframe
