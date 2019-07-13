@@ -51,3 +51,23 @@ geographic_validation (local development):
         - ssl
         - urllib
         - Internet
+
+
+plot1 (local development):
+    This includes 2 scripts, wide2long.Rmd and
+    concentration_geographic_analysis.ipynb, that take a subset of IFCB sample
+    data and plot the concentration against distance offshore. It groups the
+    species into Diatoms, Dinoflagellates, Haptophytes, and other, then graphs
+    them across latitude. 
+
+    Dependncies and Requirements:
+        - RStudio
+        - tidyverse
+        - stringr
+        - dplyr
+        - Python 3.6
+        - JupyterLab
+        - matplotlib
+        - pandas
+        - numpy
+
