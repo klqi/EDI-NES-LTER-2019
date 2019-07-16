@@ -5,6 +5,7 @@
 import pandas as pd
 import ssl
 import urllib
+import subprocess
 '''import tkinter as tk
 from tkinter import filedialog
 '''
@@ -29,15 +30,15 @@ def merge_frames(f_df, c_df, id_df):
     # drop duplicate column
     cnc_df = cnc_df.drop('pid', axis=1)
     # make sure grouped columns are all strings
-    cnc_df[['winner', 'name', 'id', 'international_id']] = cnc_df[['winner', 'name', 'id', 'international_id']].astype(str)
+    cnc_df[['winner', 'resolved_names', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr']] = cnc_df[['winner', 'resolved_names', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr']].astype(str)
     # group columns by ties, keeping original columns
     winners = cnc_df.groupby(
         ['sample_identifier', 'roi_number']).agg(
                 {
                     'winner': '|'.join,
-                    'name': '|'.join,
-                    'id': '|'.join,
-                    'international_id': '|'.join,
+                    'resolved_names': '|'.join,
+                    'resolved_id_fromgnr': '|'.join,
+                    'resolved_higher_order_fromgnr': '|'.join,
                     'Area': 'first',
                     'Biovolume': 'first',
                     'EquivDiameter': 'first',
@@ -68,7 +69,6 @@ classid_file = "20190529_classify_classlabel.csv"
 samples = pd.read_csv(file_name, usecols=["new_pid"])
 # initialize features and class data frames
 columns = ['sample_identifier', 'roi_number', 'Area', 'Biovolume', 'EquivDiameter', 'MajorAxisLength', 'MinorAxisLength']
-#  cnc_df = pd.DataFrame(columns=columns)
 f_df = pd.DataFrame(columns=columns)
 # initialize counter and loop through all samples
 counter = 0
@@ -91,7 +91,16 @@ for row in samples.iterrows():
     counter += 1
 
 # initialize dataframe to read ids
-id_df = pd.read_csv(classid_file)
+# id_df = pd.read_csv(classid_file)
+id_df = pd.DataFrame({'name': list(c_df.columns), 'international_id': 'NA'})
+id_df.to_csv("test_ids.csv", index=None, header=True)
+# run WoRMs_verify.R
+command = 'Rscript'
+path2script = 'WoRMs_verify.R'
+cmd = [command, path2script]
+subprocess.run(cmd)
+# reinitialize id_df from output of WoRMs_verify
+id_df = pd.read_csv("resolved.csv", usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])
 # call function to merge two dataframes
 cnc_df = merge_frames(f_df, c_df, id_df)
 # convert back into csv file
