@@ -6,9 +6,8 @@ import pandas as pd
 import ssl
 import urllib
 import subprocess
-'''import tkinter as tk
+import tkinter as tk
 from tkinter import filedialog
-'''
 
 
 def merge_frames(f_df, c_df, id_df):
@@ -16,6 +15,8 @@ def merge_frames(f_df, c_df, id_df):
     rem = c_df.iloc[:, 1:]
     winner = rem.idxmax(axis=1)
     c_df['winner'] = winner
+    # weighted.loc[weighted['probability']==weighted['probability'].max()].T
+
     # make substring key for matching
     c_df.pid = c_df.pid.str.slice(25, 30)
     c_df.pid = c_df.pid.str.lstrip("0")  # gets rid of leading zeros
@@ -51,58 +52,71 @@ def merge_frames(f_df, c_df, id_df):
 
 # pd.read_csv(f_url) will loop through all urls, use one for now for testing
 # files to check
-'''root = tk.Tk()
+root = tk.Tk()
 # gets rid of annoying window
 root.withdraw()
-# close window when done
-root.update()
 # bring gui to front
 root.lift()
 root.attributes('-topmost', True)
 root.after_idle(root.attributes, '-topmost', False)
+# close window when done
+root.update()
 # prompt user input for all samples file
-file_name = filedialog.askopenfilename(initialdir=".", title="Choose csv file with all samples")'''
-file_name = "use_for_testing.csv"
-# read in file with ids
-classid_file = "20190529_classify_classlabel.csv"
+file_name = filedialog.askopenfilename(initialdir=".", title="Choose csv file with all samples")
+root.destroy()
 # initialize samples data frame
 samples = pd.read_csv(file_name, usecols=["new_pid"])
 # initialize features and class data frames
 columns = ['sample_identifier', 'roi_number', 'Area', 'Biovolume', 'EquivDiameter', 'MajorAxisLength', 'MinorAxisLength']
 f_df = pd.DataFrame(columns=columns)
+# initialize id data frame
+'''id_df = pd.read_csv("resolved.csv", usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])'''
+# initialize merged data frame
+columns = ['sample_identifier', 'roi_number', 'winner', 'resolved_names', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'Area', 'Biovolume', 'EquivDiameter', 'MajorAxisLength', 'MinorAxisLength']
+cnc_df = pd.DataFrame(columns=columns)
 # initialize counter and loop through all samples
 counter = 0
 for row in samples.iterrows():
+    # skip if empty
+    if (pd.isnull(samples.new_pid[counter])):
+        break
+    # get access to get online files
     ssl._create_default_https_context = ssl._create_unverified_context
-    # features_file = "http://ifcb-data.whoi.edu/NESLTER_transect/D20180131T180620_IFCB109_features.csv"
+    # get features and class files from IFCB dashboard
     features_file = '{}_features.csv'.format(samples.new_pid[counter])
     urllib.request.urlopen(features_file)
     class_file = '{}_class_scores.csv'.format(samples.new_pid[counter])
     # extract ROI ID, class, area, biovolume, major/min axes
-    temp_ft = pd.read_csv(features_file, usecols=['roi_number', 'Area', 'Biovolume', 'EquivDiameter', 'MajorAxisLength', 'MinorAxisLength'])
-    temp_ft['sample_identifier'] = samples.new_pid[counter]
-    temp_cl = pd.read_csv(class_file)
-    # append to end of f_df and c_df to be merged later
-    f_df = pd.concat([f_df, temp_ft], ignore_index=True, sort=True)
+    f_df = pd.read_csv(features_file, usecols=['roi_number', 'Area', 'Biovolume', 'EquivDiameter', 'MajorAxisLength', 'MinorAxisLength'])
+    f_df['sample_identifier'] = samples.new_pid[counter]
+    # get autoclass scores
+    c_df = pd.read_csv(class_file)
+    # make id file only during first iteration
     if (counter == 0):
-        c_df = temp_cl
-    else:
-        c_df = pd.concat([c_df, temp_cl], ignore_index=True)
+        # initialize dataframe to read ids
+        id_df = pd.DataFrame({'name': list(c_df.columns), 'international_id': 'NA'})
+        id_df.to_csv("names_ids.csv", index=None, header=True)
+        # run WoRMs_verify.R
+        command = 'Rscript'
+        path2script = 'WoRMs_verify.R'
+        cmd = [command, path2script]
+        print("Running worms verification...")
+        # choose names_ids.csv during prompt
+        subprocess.run(cmd)
+        print("Done")
+        # reinitialize id_df from output of WoRMs_verify
+        id_df = pd.read_csv("resolved.csv", usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])
+    print("Merging...")
+    # call function to merge two dataframes
+    merged = merge_frames(f_df, c_df, id_df)
+    # print progress every 5 merges
+    if ((counter+1) % 5 == 0):
+        print("Finished current merge, {} left to run".format(len(samples.index) - (counter+1)))
+    # append to the end to be merged later
+    cnc_df = pd.concat([cnc_df, merged], ignore_index=True, sort=True)
     counter += 1
 
-# initialize dataframe to read ids
-# id_df = pd.read_csv(classid_file)
-id_df = pd.DataFrame({'name': list(c_df.columns), 'international_id': 'NA'})
-id_df.to_csv("test_ids.csv", index=None, header=True)
-# run WoRMs_verify.R
-command = 'Rscript'
-path2script = 'WoRMs_verify.R'
-cmd = [command, path2script]
-subprocess.run(cmd)
-# reinitialize id_df from output of WoRMs_verify
-id_df = pd.read_csv("resolved.csv", usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])
-# call function to merge two dataframes
-cnc_df = merge_frames(f_df, c_df, id_df)
 # convert back into csv file
-out_filename = 'test_join.csv'
+out_filename = input("Enter name of output file: ")
 cnc_df.to_csv(out_filename, index=None, header=True)
+print("Output generated")
