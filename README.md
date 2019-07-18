@@ -71,3 +71,18 @@ plot1 (local development):
         - pandas
         - numpy
 
+
+plot2 (local development):
+    This includes the script, biovolume_geographic_analysis.ipynb, which takes
+    the outputs from transect_geocheck.py and auto_extract.py to make a plot
+    analyzing the percent biovolume of higher ranking groups in samplesi
+    across latitude.
+    Currently, it draws data from the automatic classifier data from the IFCB
+    dashboard, but it can use manual classification data as well. 
+
+    Dependencies and Requirements:
+        - Python 3.6
+        - JupyterLab
+        - pandas
+        - numpy
+        - matplotlib
