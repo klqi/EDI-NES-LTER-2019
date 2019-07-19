@@ -18,6 +18,7 @@ chmod u+x /Users/Kathy/Desktop/WHOI_LTER/projects/auto_join/auto_extract.py
 cd ../auto_join/
 # run auto_extract to get file1_b.csv
 python3 /Users/Kathy/Desktop/WHOI_LTER/projects/auto_join/auto_extract.py
+cp resolved.csv ../plot2
 # return to plot2 wd
 cd ../plot2/
 ls
