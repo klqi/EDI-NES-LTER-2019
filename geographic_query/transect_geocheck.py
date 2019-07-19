@@ -12,9 +12,11 @@ import folium
 import geopy.distance
 import ssl
 import urllib
+import os
 
-all_samples_file = "NESLTER_transect_EN608_Jan2018_ifcb_locations.csv"
-subset_file = "IFCB_count_manual_transect_winter_2018_20190530.csv"
+dir_path = os.path.dirname(os.path.abspath('__file__'))
+all_samples_file = dir_path + '/NESLTER_transect_EN608_Jan2018_ifcb_locations.csv'
+subset_file = dir_path + '/IFCB_count_manual_transect_winter_2018_20190530.csv'
 # for online access
 ssl._create_default_https_context = ssl._create_unverified_context
 underway_file = "https://nes-lter-data.whoi.edu/api/underway/en608.csv"
@@ -38,7 +40,8 @@ underway['date'] = pd.to_datetime(underway['date'])
 underway['date'] = pd.Series(underway['date']).dt.round("min")
 # underway dataframe merge to get corrected coordinates from gps_furno
 all_samples = pd.merge(all_samples, underway, how='left', left_on='date', right_on='date')
-all_samples['offset'] = 0
+all_samples['offset'] = 0.0
+all_samples['dist_from_ref'] = 0.0
 subset_samples = pd.read_csv(subset_file, usecols=['sample_identifier'])
 # initialize column headers with latitude/longitude from original file and
 # ulatitude/ulongitude from gps_furuno data
@@ -51,6 +54,8 @@ joes_samples = pd.DataFrame(columns=col)
 bad_IFCB = "IFCB109"
 # prompt user input to specify distance from longitude
 ref_dist = float(input('Please enter an distance (km): '))
+# convert to float
+ref_dist = float(ref_dist)
 counter = 0
 index = 0
 # loop through all samples
@@ -76,11 +81,12 @@ for row in all_samples.iterrows():
     check_IFCB = whole[-7:]
     all_samples.key[counter] = cut
     # only plot marker if sample is 1 km east/west from station 5
-    dist = geopy.distance.geodesic(ref_coord, coords).km
-    udist = geopy.distance.geodesic(uref_coord, ucoords).km
+    dist = float(geopy.distance.geodesic(ref_coord, coords).km)
+    udist = float(geopy.distance.geodesic(uref_coord, ucoords).km)
     # offset distance from dist and udist
-    off_dist = geopy.distance.geodesic(ucoords, coords).m
+    off_dist = float(geopy.distance.geodesic(ucoords, coords).m)
     all_samples.offset[counter] = off_dist
+    all_samples.dist_from_ref[counter] = udist
     # if both coordinates are within the ref_dist range
     if (dist <= ref_dist and udist <= ref_dist and check_IFCB != bad_IFCB):
         # make purple marker for good sample points

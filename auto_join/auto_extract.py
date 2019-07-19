@@ -8,6 +8,7 @@ import urllib
 import subprocess
 import tkinter as tk
 from tkinter import filedialog
+import os
 
 
 def merge_frames(f_df, c_df, id_df):
@@ -98,14 +99,16 @@ for row in samples.iterrows():
         id_df.to_csv("names_ids.csv", index=None, header=True)
         # run WoRMs_verify.R
         command = 'Rscript'
-        path2script = 'WoRMs_verify.R'
+        dir_path =  os.path.dirname(os.path.abspath('__file__'))
+        path2script = dir_path + '/WoRMs_verify.R'
         cmd = [command, path2script]
         print("Running worms verification...")
         # choose names_ids.csv during prompt
         subprocess.run(cmd)
         print("Done")
         # reinitialize id_df from output of WoRMs_verify
-        id_df = pd.read_csv("resolved.csv", usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])
+        resolved = dir_path + '/resolved.csv'
+        id_df = pd.read_csv(resolved, usecols=['name', 'resolved_names', 'resolved_higher_order_fromgnr', 'resolved_id_fromgnr'])
     print("Merging...")
     # call function to merge two dataframes
     merged = merge_frames(f_df, c_df, id_df)
@@ -117,6 +120,6 @@ for row in samples.iterrows():
     counter += 1
 
 # convert back into csv file
-out_filename = input("Enter name of output file: ")
+out_filename = 'file_1b.csv'
 cnc_df.to_csv(out_filename, index=None, header=True)
 print("Output generated")
