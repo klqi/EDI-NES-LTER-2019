@@ -5,7 +5,7 @@ Project members and collaboraters: Stace Beaulieu, Joe Futrelle, Heidi Sosik, Ka
 
 Includes Python and R scripts for data analysis and publication:
 
-auto_join (currently under local development):
+auto_join:
     This includes a Python script (auto_extract.py) that creates a file 1_b prototype that can be used for 
     analysis of features and classes from the automatic classifier.
     
@@ -17,7 +17,7 @@ auto_join (currently under local development):
         - All csv files within folder 
 
 
-namespace_validation (local development):
+namespace_validation:
     This project uses an R Markdown file (WoRMS_verify.Rmd) to resolve and re-classisy given taxonomic
     groups to the WoRMS database (primary) or NCBI (secondary). It generates an output csv file with the 
     original and corrected information that can be manually edited for name space development for 
@@ -34,7 +34,7 @@ namespace_validation (local development):
         - Internet
 
 
-geographic_validation (local development):
+geographic_validation:
     This iteration includes a Python script (transect_geocheck.py) that
     generates 2 csv files and an html file. "transect_subset.csv" is the
     original samples given (~140) with location data and
@@ -72,7 +72,7 @@ plot1 (local development):
         - numpy
 
 
-plot2 (local development):
+plot2:
     This includes the script, biovolume_geographic_analysis.ipynb, which takes
     the outputs from transect_geocheck.py and auto_extract.py to make a plot
     analyzing the percent biovolume of higher ranking groups in samplesi
@@ -86,3 +86,6 @@ plot2 (local development):
         - pandas
         - numpy
         - matplotlib
+        - Unix Shell
+        - current file hierarchy of this repo
+        - Internet
