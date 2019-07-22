@@ -53,12 +53,14 @@ geographic_validation:
         - Internet
 
 
-plot1 (local development):
+plot1:
     This includes 2 scripts, wide2long.Rmd and
     concentration_geographic_analysis.ipynb, that take a subset of IFCB sample
     data and plot the concentration against distance offshore. It groups the
     species into Diatoms, Dinoflagellates, Haptophytes, and other, then graphs
-    them across latitude. 
+    them across latitude. The jupyter notebook includes a bash script that can
+    be run from any unix machine, creating the required files to make the
+    analysis. 
 
     Dependncies and Requirements:
         - RStudio
@@ -69,7 +71,11 @@ plot1 (local development):
         - JupyterLab
         - matplotlib
         - pandas
+        - tkinter
         - numpy
+        - Unix Shell
+        - current file hierarchy of this repo
+        - Internet
 
 
 plot2:
@@ -78,12 +84,15 @@ plot2:
     analyzing the percent biovolume of higher ranking groups in samplesi
     across latitude.
     Currently, it draws data from the automatic classifier data from the IFCB
-    dashboard, but it can use manual classification data as well. 
+    dashboard, but it can use manual classification data as well. The jupyter notebook includes a bash script that can
+    be run from any unix machine, creating the required files to make the
+    analysis.
 
     Dependencies and Requirements:
         - Python 3.6
         - JupyterLab
         - pandas
+        - tkinter
         - numpy
         - matplotlib
         - Unix Shell
