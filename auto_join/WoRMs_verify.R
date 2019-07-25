@@ -1,23 +1,26 @@
-# title: "WoRMs_verify"
-# author: "Katherine Qi"
-# date: "6/21/2019"
-
-
+## ----setup, include=FALSE------------------------------------------------
+knitr::opts_chunk$set(echo = TRUE)
 library(taxize)
 library(worrms)
 library(plyr)
 library(dplyr)
 library(tcltk)
 
+
+## ------------------------------------------------------------------------
 # local development only
 rm(list=ls())
-setwd("~/Desktop/WHOI_LTER/projects/auto_join/")
+# get and set current working director
+base_dir <- dirname(getwd())
+curr_dir <- paste(base_dir,"/auto_join/", sep="")
+setwd(curr_dir)
 #man.data <- read.csv(file.choose())
 man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
 #man.data <- read.csv("20190529_classify_classlabel.csv")
-my_path <- "~/Desktop/WHOI_LTER/projects/auto_join/resolved.csv"
+my_path <- paste(curr_dir,"resolved.csv", sep="")
 
 
+## ------------------------------------------------------------------------
 # wrapper function to call taxize get_wormsid function and put data into appropriate column 
 acquire_wormsid <- function(resolved_name, counter, man.data) {
   response <- taxize::get_wormsid_(
@@ -58,14 +61,18 @@ name2taxoninfo <- function(tx_name, counter, man.data) {
   
   # check which of the three main groups tx_name falls under
   if (!identical(character(0), class) && class == "Bacillariophyceae") {
-    man.data$resolved_higher_order_fromgnr[counter] <<- "Diatom"
+      man.data$resolved_higher_order_fromgnr[counter] <<- class
+      man.data$resolved_higher_order_id[counter] <<- '148899'
   } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
-    man.data$resolved_higher_order_fromgnr[counter] <<- "Dinoflagellate"
+      man.data$resolved_higher_order_fromgnr[counter] <<- infphy
+      man.data$resolved_higher_order_id[counter] <<- '146203'
   } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
-    man.data$resolved_higher_order_fromgnr[counter] <<- "Haptophyte"
+      man.data$resolved_higher_order_fromgnr[counter] <<- phylum
+      man.data$resolved_higher_order_id[counter] <<- '369190'
   } else {
-    man.data$resolved_higher_order_fromgnr[counter] <<- "other"
-  }
+      man.data$resolved_higher_order_fromgnr[counter] <<- "other"
+      man.data$resolved_higher_order_id[counter] <<- '-6666'
+    }
 }
 
 
@@ -81,24 +88,24 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   hierarchy <- classification(int_id, db='worms', rows=1)
   # get id, class, infraphylum, and phylum
   hierarchy <- as.data.frame(hierarchy[[1]])
-  # only set resolved id in the case that the resolved id doesn't exist yet
-  # if (is.na(man.data$resolved_higher_order_fromgnr[counter])) {
-  #   taxon_level <- tools::toTitleCase(taxon_level)
-  #   man.data$resolved_id_fromgnr[counter] <<- hierarchy$id[hierarchy$rank == taxon_level]
-  # }
+
   class <- hierarchy$name[hierarchy$rank == "Class"]
   infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
   phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
   
   # check which of the three main groups tx_name falls under
   if (!identical(character(0), class) && class == "Bacillariophyceae") {
-    man.data$higher_order_fromid[counter] <<- "Diatom"
+    man.data$higher_order_fromid[counter] <<- class
+    man.data$higher_order_id[counter] <<- '148899'
   } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
-    man.data$higher_order_fromid[counter] <<- "Dinoflagellate"
+    man.data$higher_order_fromid[counter] <<- infphy
+    man.data$higher_order_id[counter] <<- '146203'
   } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
-    man.data$higher_order_fromid[counter] <<- "Haptophyte"
+    man.data$higher_order_fromid[counter] <<- phylum
+    man.data$higher_order_id[counter] <<- '369190'
   } else {
     man.data$higher_order_fromid[counter] <<- "other"
+    man.data$higher_order_id[counter] <<- '-6666'
   }
   
   # sets data_source column if original name could not be resolved through gnr 
@@ -116,6 +123,7 @@ is_abiotic <- function(name, counter) {
 }
 
 
+## ---- echo=FALSE, include=FALSE------------------------------------------
 # Resolve names 
 counter <- 1
 # column names 
@@ -123,17 +131,19 @@ man.data$resolved_names <- NA_character_
 man.data$taxon_level_fromid <- NA_character_
 man.data$taxon_name_fromid <- NA_character_
 man.data$higher_order_fromid <- NA_character_
+man.data$higher_order_id <- NA_character_
 man.data$data_source <- NA_character_
 man.data$resolved_id_fromgnr <- NA_character_
 man.data$resolved_taxon_level_fromgnr <- NA_character_
 man.data$resolved_higher_order_fromgnr <- NA_character_
+man.data$resolved_higher_order_id <- NA_character_
 man.data$name_match <- FALSE
 man.data$id_match <- FALSE
 man.data$higher_match <- FALSE
 man.data$alt_datasource <- NA_character_
 man.data$alt_resolved_name <- NA_character_
-# reorder columns
-man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "data_source", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
+# reorder columns bcuz R is annoying
+man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "higher_order_id", "data_source", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "resolved_higher_order_id", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
 
 # loop through all rows
 for (row in 1:nrow(man.data)) {
@@ -198,7 +208,7 @@ for (row in 1:nrow(man.data)) {
   } else {
     # case: gnr unable to resolve by name, fill with NA 
     man.data$resolved_names[counter] <- NA_character_
-    
+
     # edge case: check if international id is not empty for row 
     if(!is.na(man.data$international_id[counter])) {
       # fill in taxon info based on ID
@@ -234,3 +244,4 @@ worms_verified <- man.data$name[!is.na(man.data$resolved_id_fromgnr)]
 
 #convert to csv file 
 write.csv(man.data, my_path)
+

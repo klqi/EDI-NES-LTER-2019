@@ -35,40 +35,33 @@ consolidate <- function() {
 
 
 ## ----data cleaning, include=FALSE----------------------------------------
-# local development only
-setwd("~/Desktop/WHOI_LTER/projects/plot1/")
+# get and set current working director
+base_dir <- dirname(getwd())
+curr_dir <- paste(base_dir,"/plot1/", sep="")
+setwd(curr_dir)
 # read in csv files 
-transect<- read.csv("IFCB_count_manual_transect_winter_2018_20190530.csv")
+transect<- read.csv("man_ann_for_kqi.csv")
 ids <- read.csv("resolved.csv")
 # only read selected columns
 ids <- ids[,c("name", "international_id", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "taxon_level_fromid", "resolved_higher_order_fromgnr", "higher_order_fromid")]
 latlong <- read.csv("comparison.csv")
 latlong <- latlong[,c("key", "gps_furuno_latitude", "gps_furuno_longitude")]
 
-# removes incorrectly formatted data row from transect
-transect$date <- NULL
-
-# convert to long format
-format_long <- transect %>%
-  gather(key="name", value="Abundance", Asterionellopsis_glacialis:Chaetoceros_danicus)
-
-# reformat names to be merged
-format_long$name <- gsub('_', ' ', format_long$name)
-# remove rows with 0s for memory 
-format_long <- format_long %>% filter(format_long$Abundance != 0)
-
-# left join with ids, taxon level, and higher order based on name
-format_long <- left_join(format_long, ids, by="name")
+# convert to character vectors
+transect$class_name <- as.character(transect$class_name)
+ids$name <- as.character(ids$name)
+# merge manual annotations with resolved data to get correct taxon info
+format_long <- left_join(transect, ids, by=c("class_name" = "name"))
 
 # restructure dataframe for organization
 consolidate()
 
 # left join based on sample_identifier
-format_long$sample_identifier <- as.character(format_long$sample_identifier)
-format_long <- left_join(format_long, latlong, by = c("sample_identifier" = "key"))
+format_long$pid <- as.character(format_long$pid)
+latlong$key <- as.character(latlong$key)
+format_long <- left_join(format_long, latlong, by = c("pid" = "key"))
 
 
-# write to output file- can change based on where you want the output file 
-write.csv(format_long, "~/Desktop/WHOI_LTER/projects/plot1/long_transect.csv")
-
-
+# write to output file- can change based on where you want the output file
+output_path <- paste(curr_dir,"long_transect.csv", sep="")
+write.csv(format_long, output_path)

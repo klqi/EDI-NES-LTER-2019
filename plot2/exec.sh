@@ -24,7 +24,12 @@ chmod u+x $JOIN_SCRIPT
 cd ../auto_join/
 # run auto_extract to get file1_b.csv
 python3 $JOIN_SCRIPT
-cp resolved.csv ../plot2
+cp level_1b.csv ../plot2
+# clean up a little
+rm names_ids.csv resolved.csv
+# move files to plot2 directory
+mv resolved_auto.csv ../plot2
+mv resolved_manual.csv ../plot2
 # return to plot2 wd
 cd ../plot2/
 ls
