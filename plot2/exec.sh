@@ -4,6 +4,14 @@
 cd ..
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# check if new cruise is being run
+if [ $1 = 'y' ]; then
+    # clear files
+    cd auto_join
+    rm resolved_auto.csv resolved_manual.csv
+    cd ..
+fi
+    
 # make sure geographic script is executable
 GEO_DIR="${BASE_DIR}/geographic_query/transect_geocheck.py"
 chmod u+x $GEO_DIR
@@ -28,8 +36,8 @@ cp level_1b.csv ../plot2
 # clean up a little
 rm names_ids.csv resolved.csv
 # move files to plot2 directory
-mv resolved_auto.csv ../plot2
-mv resolved_manual.csv ../plot2
+cp resolved_auto.csv ../plot2
+cp resolved_manual.csv ../plot2
 # return to plot2 wd
 cd ../plot2/
 ls
