@@ -15,6 +15,7 @@ import subprocess
 import tkinter as tk
 from tkinter import filedialog
 import os
+from os import path
 
 
 # helper function for merging automated classifications
@@ -90,18 +91,19 @@ def auto_construct(all_samples, level_1b):
         # get autoclass name
         c_df = pd.read_csv(class_file)
         # make id dataframe to get automated names_ids
-        if (counter == 0):
+        if (counter == 0 and not path.exists('resolved_auto.csv')):
+            # first check if file already exists
             # initialize dataframe to read ids
             id_df = pd.DataFrame({'name': list(c_df.columns), 'international_id': 'NA'})
             # output csv to be input for WoRMs_verify script
-            id_df.to_csv("names_ids.csv", index=None, header=True)
+            id_df.to_csv("intermediate_names_ids.csv", index=None, header=True)
             # run WoRMs_verify.R
             command = 'Rscript'
             dir_path = os.path.dirname(os.path.abspath('__file__'))
             path2script = dir_path + '/WoRMs_verify.R'
             cmd = [command, path2script]
             print("Running worms verification...")
-            # choose names_ids.csv during prompt
+            # choose intermediate_names_ids.csv during prompt
             subprocess.run(cmd)
             print("Done")
             # reinitialize id_df from output of WoRMs_verify
@@ -110,6 +112,9 @@ def auto_construct(all_samples, level_1b):
             # output resolved file
             id_df.to_csv('resolved_auto.csv', index=None, header=True)
             id_df = id_df[['name', 'resolved_names', 'resolved_id_fromgnr']]
+        else:
+            # initialize id data frame from existing file
+            id_df = pd.read_csv('resolved_auto.csv', usecols=['name', 'resolved_names', 'resolved_id_fromgnr'])
         print("Merging...")
         # call function to merge two dataframes
         merged = merge_frames(f_df, c_df, id_df)
@@ -129,25 +134,29 @@ def manual_construct(all_samples, level_1b):
     # subset samples so that each name will only be called once
     samples = all_samples.drop_duplicates(subset='class_name').reset_index()
 
-    # initialize dataframe to read ids
-    id_df = pd.DataFrame({'name': list(samples.class_name), 'international_id': 'NA'})
-    id_df.to_csv("names_ids.csv", index=None, header=True)
-    # run WoRMs_verify.R
-    command = 'Rscript'
-    dir_path = os.path.dirname(os.path.abspath('__file__'))
-    path2script = dir_path + '/WoRMs_verify.R'
-    cmd = [command, path2script]
-    print("Running worms verification...")
-    # choose names_ids.csv during prompt
-    subprocess.run(cmd)
-    print("Done")
-    # reinitialize id_df from output of WoRMs_verify
-    resolved = dir_path + '/resolved.csv'
-    # get name, ids, higher ranks, and higher rank ids
-    id_df = pd.read_csv(resolved)
-    # output resolved file
-    id_df.to_csv('resolved_manual.csv', index=None, header=True)
-    id_df = id_df[['name', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id']]
+    # check if resolved doesn't exist
+    if not (path.exists('resolved_manual.csv')):
+        # initialize dataframe to read idss
+        id_df = pd.DataFrame({'name': list(samples.class_name), 'international_id': 'NA'})
+        id_df.to_csv("intermediate_names_ids.csv", index=None, header=True)
+        # run WoRMs_verify.R
+        command = 'Rscript'
+        dir_path = os.path.dirname(os.path.abspath('__file__'))
+        path2script = dir_path + '/WoRMs_verify.R'
+        cmd = [command, path2script]
+        print("Running worms verification...")
+        # choose intermediate_names_ids.csv during prompt
+        subprocess.run(cmd)
+        print("Done")
+        # reinitialize id_df from output of WoRMs_verify
+        resolved = dir_path + '/resolved.csv'
+        # get name, ids, higher ranks, and higher rank ids
+        id_df = pd.read_csv(resolved)
+        # output resolved file
+        id_df.to_csv('resolved_manual.csv', index=None, header=True)
+        id_df = id_df[['name', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id']]
+    else:
+        id_df = pd.read_csv('resolved_manual.csv', usecols=['name', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id'])
 
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
@@ -183,6 +192,7 @@ all_samples = all_samples.drop(['user_id', 'verifications'], axis=1)
 # initialize level 1b formatted DataFrame
 columns = ['permalink', 'namespace_automated', 'identification_automated', 'namespace_manual', 'identification_manual', 'worms_higher_order_manual', 'higher_order_id', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
 level_1b = pd.DataFrame(columns=columns)
+
 
 # first construct for automated classifications
 level_1b = auto_construct(all_samples, level_1b)

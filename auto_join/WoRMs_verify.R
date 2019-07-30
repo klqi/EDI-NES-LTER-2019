@@ -10,7 +10,6 @@ library(tcltk)
 ## ------------------------------------------------------------------------
 # local development only
 rm(list=ls())
-# get and set current working director
 base_dir <- dirname(getwd())
 curr_dir <- paste(base_dir,"/auto_join/", sep="")
 setwd(curr_dir)
@@ -18,7 +17,6 @@ setwd(curr_dir)
 man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
 #man.data <- read.csv("20190529_classify_classlabel.csv")
 my_path <- paste(curr_dir,"resolved.csv", sep="")
-
 
 ## ------------------------------------------------------------------------
 # wrapper function to call taxize get_wormsid function and put data into appropriate column 
@@ -38,11 +36,28 @@ acquire_wormsid <- function(resolved_name, counter, man.data) {
     resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
     get.id <- paste(resolved_name, sep='.', "AphiaID")
     # Pull highest order taxon id
-    resolved_id <- response[1, get.id]
-    man.data$resolved_id_fromgnr[counter] <<- resolved_id
+    resolved_id <- as.numeric(response[1, get.id])
+    man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
     # sets data_source column if original name could not be resolved through gnr 
     man.data$data_source[counter] <<- "World Register of Marine Species"
   } # else leave columns with original NA values
+}
+
+taxon_match <- function(counter, man.data) {
+  # check if taxon name matches with resolved
+  if (man.data$taxon_name_fromid[counter] == man.data$resolved_names[counter]) {
+    # set name_match to true
+    man.data$name_match[counter] <<- TRUE
+  }
+  # check if id matches with resolved
+  if (man.data$international_id[counter] == man.data$resolved_id_fromgnr[counter]) {
+    # set id_match to true
+    man.data$id_match[counter] <<- TRUE
+  }
+  # check if higher order matches with resolved
+  if (man.data$higher_order_fromid[counter] == man.data$resolved_higher_order_fromgnr[counter]) {
+    man.data$higher_match[counter] <<- TRUE
+  }
 }
 
 
@@ -61,18 +76,18 @@ name2taxoninfo <- function(tx_name, counter, man.data) {
   
   # check which of the three main groups tx_name falls under
   if (!identical(character(0), class) && class == "Bacillariophyceae") {
-      man.data$resolved_higher_order_fromgnr[counter] <<- class
-      man.data$resolved_higher_order_id[counter] <<- '148899'
+    man.data$resolved_higher_order_fromgnr[counter] <<- class
+    man.data$resolved_higher_order_id[counter] <<- 148899
   } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
-      man.data$resolved_higher_order_fromgnr[counter] <<- infphy
-      man.data$resolved_higher_order_id[counter] <<- '146203'
+    man.data$resolved_higher_order_fromgnr[counter] <<- infphy
+    man.data$resolved_higher_order_id[counter] <<- 146203
   } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
-      man.data$resolved_higher_order_fromgnr[counter] <<- phylum
-      man.data$resolved_higher_order_id[counter] <<- '369190'
+    man.data$resolved_higher_order_fromgnr[counter] <<- phylum
+    man.data$resolved_higher_order_id[counter] <<- 369190
   } else {
-      man.data$resolved_higher_order_fromgnr[counter] <<- "other"
-      man.data$resolved_higher_order_id[counter] <<- '-6666'
-    }
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_id[counter] <<- -6666
+  }
 }
 
 
@@ -88,7 +103,7 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   hierarchy <- classification(int_id, db='worms', rows=1)
   # get id, class, infraphylum, and phylum
   hierarchy <- as.data.frame(hierarchy[[1]])
-
+  
   class <- hierarchy$name[hierarchy$rank == "Class"]
   infphy <- hierarchy$name[hierarchy$rank == "Infraphylum"]
   phylum <- hierarchy$name[hierarchy$rank == "Phylum"]
@@ -96,27 +111,92 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   # check which of the three main groups tx_name falls under
   if (!identical(character(0), class) && class == "Bacillariophyceae") {
     man.data$higher_order_fromid[counter] <<- class
-    man.data$higher_order_id[counter] <<- '148899'
+    man.data$higher_order_id[counter] <<- 148899
   } else if (!identical(character(0), infphy) && infphy == "Dinoflagellata") {
     man.data$higher_order_fromid[counter] <<- infphy
-    man.data$higher_order_id[counter] <<- '146203'
+    man.data$higher_order_id[counter] <<- 146203
   } else if (!identical(character(0), phylum) && phylum == "Haptophyta") {
     man.data$higher_order_fromid[counter] <<- phylum
-    man.data$higher_order_id[counter] <<- '369190'
+    man.data$higher_order_id[counter] <<- 369190
   } else {
-    man.data$higher_order_fromid[counter] <<- "other"
-    man.data$higher_order_id[counter] <<- '-6666'
+    man.data$higher_order_fromid[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$higher_order_id[counter] <<- -6666
   }
   
   # sets data_source column if original name could not be resolved through gnr 
   man.data$data_source[counter] <<- "World Register of Marine Species"
 }
 
+
 # helper function to fill in information for abiotic classes
 is_abiotic <- function(name, counter) {
-  if (name == "bad" | name == "detritus" | name == "bead" | name == "bubble" | name == "pollen" | name == "camera spot") {
+  if (name == "detritus" | name == "bead" | name == "bubble" | name == "pollen" | name == "camera spot") {
     man.data$alt_datasource[counter] <<- "OCB"
     man.data$alt_resolved_name[counter] <<- toString(name)
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+
+# helper function to fill in information for specific classes
+is_specific <- function(name, counter) {
+  # check if bad or other
+  if (name == "bad" | name == "other") {
+    return(TRUE)
+  }
+  # check if name has a higher ranking of Eukaryota
+  if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3") {
+    # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
+    man.data$alt_datasource[counter] <<- "NCBI"
+    man.data$alt_resolved_name[counter] <<- "Eukaryota"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_id[counter] <<- "-6666"
+    return(TRUE)
+  }
+    # check if name is from automated classifier
+  if (name == "mix_elongated") {
+    # gets classified as diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes (same as mix for automated)
+    man.data$name[counter] <<- "mix_elongated_auto"
+    man.data$alt_datasource[counter] <<- "NCBI"
+    man.data$alt_resolved_name[counter] <<- "Eukaryota"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_id[counter] <<- "-6666"
+    return(TRUE)
+  }
+  # check if name has a higher ranking of Diatom
+  if (name == "pennate" | name == "pennate morphotype1" | name == "mix elongated") {
+    # gets classified as diatoms
+    man.data$alt_datasource[counter] <<- "Sosik-specific"
+    man.data$alt_resolved_name[counter] <<- name
+    man.data$resolved_higher_order_fromgnr[counter] <<- "Bacillariophyceae"
+    man.data$resolved_higher_order_id[counter] <<- 148899
+    return(TRUE)
+  }
+  # check if higher ranking is dinoflagellate then run through script
+  if (name == "dino30" | name == "dino") {
+    # retain original name but add international id field of Dinoflagellata
+    man.data$international_id[counter] <<- 146203
+    return(FALSE)
+  }
+  # check if name was misclassified then run through script wiht corrected name
+  if (name == "DactFragCerataul") {
+    # retain original but add international id of Dactyliosolen fragilissimus
+    man.data$international_id[counter] <<- 149310
+    return(FALSE)
+  }
+  # check if name is zooplankton, change to kingdom rank
+  if (name == "zooplankton") {
+    # retain original name but add international id of Animalia
+    man.data$international_id[counter] <<- 2
+    return(FALSE)
+  }
+  # check if ciliate mix manual
+  if (name == "Ciliate mix" || name == "ciliate_mix") {
+    # classify as other than diatoms, dinoflagellates, or haptophytes
+    man.data$alt_datasource[counter] <<- "Sosik-specific"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_id[counter] <<- -6666
     return(TRUE)
   }
   return(FALSE)
@@ -133,10 +213,10 @@ man.data$taxon_name_fromid <- NA_character_
 man.data$higher_order_fromid <- NA_character_
 man.data$higher_order_id <- NA_character_
 man.data$data_source <- NA_character_
-man.data$resolved_id_fromgnr <- NA_character_
+man.data$resolved_id_fromgnr <- NA_integer_
 man.data$resolved_taxon_level_fromgnr <- NA_character_
 man.data$resolved_higher_order_fromgnr <- NA_character_
-man.data$resolved_higher_order_id <- NA_character_
+man.data$resolved_higher_order_id <- NA_integer_
 man.data$name_match <- FALSE
 man.data$id_match <- FALSE
 man.data$higher_match <- FALSE
@@ -144,11 +224,20 @@ man.data$alt_datasource <- NA_character_
 man.data$alt_resolved_name <- NA_character_
 # reorder columns bcuz R is annoying
 man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "higher_order_id", "data_source", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "resolved_higher_order_id", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
-
+# change data type
+man.data$name <- as.character(man.data$name)
+man.data$international_id <- as.numeric(man.data$international_id)
+man.data$resolved_id_fromgnr <- as.numeric(man.data$resolved_id_fromgnr)
 # loop through all rows
 for (row in 1:nrow(man.data)) {
   # first check if name is abiotic
   if (is_abiotic(man.data$name[counter], counter)) {
+    # skip to next row if true
+    counter <- counter + 1
+    next
+  }
+  # then check if names belong in specific category
+  if (is_specific(man.data$name[counter], counter)) {
     # skip to next row if true
     counter <- counter + 1
     next
@@ -165,7 +254,7 @@ for (row in 1:nrow(man.data)) {
     man.data$resolved_names[counter] <- resolved_name
     # add to data_source or alt_ds column
     authority <- unlist(temp[1, 'data_source_title'])
-    # add to data_source if WORMs or alt_ds for other 
+    # add to data_source if WORMs or alt_ds for other than diatoms, dinoflagellates, or haptophytes than diatoms, dinoflagellates, or haptophytes 
     if (authority == primary_ds) {
       man.data$data_source[counter] <- authority
     } else {
@@ -189,39 +278,33 @@ for (row in 1:nrow(man.data)) {
       id2taxoninfo(man.data$international_id[counter], counter, man.data)
       # call helper function to retrieve taxon info from resolved_name 
       name2taxoninfo(resolved_name, counter, man.data)
-      
-      # check if taxon name matches with resolved
-      if (man.data$taxon_name_fromid[counter] == man.data$resolved_names[counter]) {
-        # set name_match to true
-        man.data$name_match[counter] <- TRUE
-      }
-      # check if id matches with resolved
-      if (man.data$international_id[counter] == man.data$resolved_id_fromgnr[counter]) {
-        # set id_match to true
-        man.data$id_match[counter] <- TRUE
-      }
-      # check if higher order matches with resolved
-      if (man.data$higher_order_fromid[counter] == man.data$resolved_higher_order_fromgnr[counter]) {
-        man.data$higher_match[counter] <- TRUE
-      }
+      # check if name and id taxon info match
+      taxon_match(counter, man.data)
     }
   } else {
-    # case: gnr unable to resolve by name, fill with NA 
-    man.data$resolved_names[counter] <- NA_character_
-
     # edge case: check if international id is not empty for row 
-    if(!is.na(man.data$international_id[counter])) {
+    if (!is.na(man.data$international_id[counter])) {
       # fill in taxon info based on ID
       id <- man.data$international_id[counter]
       id2taxoninfo(id, counter, man.data)
-      # leave resolved information as NA and check match columns false
+      # attempt to resolve based on name through get_worms_id instead of gnr
+      acquire_wormsid(man.data$name[counter], counter, man.data)
+      # check if id was resolved
+      if (!is.na(man.data$resolved_id_fromgnr[counter])) {
+        # set resolved name
+        man.data$resolved_names[counter] <- man.data$name[counter]
+        # resolve taxon info from working name
+        name2taxoninfo(man.data$name[counter], counter, man.data)
+        # check if name and taxon info match
+        taxon_match(counter, man.data)
+      }
+      # if id was unable to resolved, then leave columns as NA values
     }
     # edge case: unable to resolve name and international id does not exist 
     else {
       # check if id can be resolved with original, unresolved name
       test_name <- man.data$name[counter]
       acquire_wormsid(test_name, counter, man.data)
-      
       # see if id was able to be resolved
       if (!is.na(man.data$resolved_id_fromgnr[counter])) {
         # fill in taxon info from id
@@ -230,8 +313,10 @@ for (row in 1:nrow(man.data)) {
       }
       # unable to get id from original name 
       else {
+        # case: gnr unable to resolve by name, fill with NA 
+        man.data$resolved_names[counter] <- NA_character_
         # fill ID with NA
-        man.data$resolved_id_fromgnr[counter] <- NA_character_
+        man.data$resolved_id_fromgnr[counter] <- NA_integer_
       }
     }
   }
