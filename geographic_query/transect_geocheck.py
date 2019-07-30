@@ -16,7 +16,7 @@ import os
 
 dir_path = os.path.dirname(os.path.abspath('__file__'))
 all_samples_file = dir_path + '/NESLTER_transect_EN608_Jan2018_ifcb_locations.csv'
-subset_file = dir_path + '/IFCB_count_manual_transect_winter_2018_20190530.csv'
+subset_file = dir_path + '/man_query_data.csv'
 # for online access
 ssl._create_default_https_context = ssl._create_unverified_context
 underway_file = "https://nes-lter-data.whoi.edu/api/underway/en608.csv"
@@ -42,7 +42,7 @@ underway['date'] = pd.Series(underway['date']).dt.round("min")
 all_samples = pd.merge(all_samples, underway, how='left', left_on='date', right_on='date')
 all_samples['offset'] = 0.0
 all_samples['dist_from_ref'] = 0.0
-subset_samples = pd.read_csv(subset_file, usecols=['sample_identifier'])
+subset_samples = pd.read_csv(subset_file, usecols=['pid'])
 # initialize column headers with latitude/longitude from original file and
 # ulatitude/ulongitude from gps_furuno data
 columns = ['index', 'sample_identifier', 'latitude', 'longitude', 'ulatitude', 'ulongitude']
@@ -118,29 +118,31 @@ for row in all_samples.iterrows():
         index += 1
     counter += 1
 
-# merge subset_samples and all_samples based on key and pid
-subset_samples = pd.merge(subset_samples, all_samples, how='left', left_on='sample_identifier', right_on='key')
-old_pids = subset_samples[['date', 'pid']]
+# merge subset_samples and all_samples based on key and pids
+subset_samples.rename(columns={'pid': 'key'}, inplace=True)
+subset_samples = subset_samples.drop_duplicates(subset='key').reset_index()
+subset_samples = pd.merge(subset_samples, all_samples, how='left', on='key')
+'''old_pids = subset_samples[['date', 'pid_x']]
 old_pids['date'] = pd.to_datetime(old_pids['date'])
 joes_samples['date'] = pd.to_datetime(joes_samples['date'])
 # merge subset_samples with joes_samples based on date
 joes_samples = pd.merge(joes_samples, old_pids, how='outer', on='date')
 joes_samples = joes_samples.replace(r'^\s*$', "NA", regex=True)
-joes_samples.rename(columns={'pid': 'old_pids'}, inplace=True)
+joes_samples.rename(columns={'pid': 'old_pids'}, inplace=True)'''
 # plot coordinates from original subset sample onto map- quality check portion
 counter = 0
-'''for row in subset_samples.iterrows():
+for row in subset_samples.iterrows():
     lat = subset_samples.gps_furuno_latitude[counter]
     long = subset_samples.gps_furuno_longitude[counter]
     counter += 1
     # get coordinates
     ucoords = (lat, long)
     # Add marker to original subset coordinates
-    folium.CircleMarker(ucoords, radius=1, color='purple').add_to(map)'''
+    folium.CircleMarker(ucoords, radius=1, color='purple').add_to(map)
 # save map
 map.save("IFCB_EN608_map.html")
 # save information to csv files, comment out as necessary
 good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
 subset_samples.to_csv("transect_subset.csv", index=None, header=True)
 all_samples.to_csv("comparison.csv", index=None, header=True)
-joes_samples.to_csv("query_samples.csv", index=None, header=True)
+# joes_samples.to_csv("query_samples.csv", index=None, header=True)
