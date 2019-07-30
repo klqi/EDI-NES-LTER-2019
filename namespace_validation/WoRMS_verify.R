@@ -1,41 +1,23 @@
----
-title: "WoRMs_verify"
-author: "Katherine Qi"
-date: "6/21/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 library(taxize)
 library(worrms)
 library(plyr)
 library(dplyr)
 library(tcltk)
-```
 
-## R Markdown
-Set up taxonomy table built from inputted data set 
-Run functions first to be able to use them in script (last chunk)- clean up later
 
-Input requirements:
-csv table with all species names in a column "name" and their corresponding ids in a column "international_id"
-
-```{r}
+## ------------------------------------------------------------------------
 # local development only
 rm(list=ls())
-base_dir <- dirname(getwd())
-curr_dir <- paste(base_dir,"/namespace_validation/", sep="")
-setwd(curr_dir)
+setwd("~/Desktop/WHOI_LTER/projects/namespace_validation/")
 #man.data <- read.csv(file.choose())
 man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
 #man.data <- read.csv("20190529_classify_classlabel.csv")
-my_path <- paste(curr_dir,"resolved.csv", sep="")
-```
+my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
 
 
-# helper functions used in script 
-```{r}
+## ------------------------------------------------------------------------
 # wrapper function to call taxize get_wormsid function and put data into appropriate column 
 acquire_wormsid <- function(resolved_name, counter, man.data) {
   response <- taxize::get_wormsid_(
@@ -53,8 +35,8 @@ acquire_wormsid <- function(resolved_name, counter, man.data) {
     resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
     get.id <- paste(resolved_name, sep='.', "AphiaID")
     # Pull highest order taxon id
-    resolved_id <- as.numeric(response[1, get.id])
-    man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
+    resolved_id <- response[1, get.id]
+    man.data$resolved_id_fromgnr[counter] <<- resolved_id
     # sets data_source column if original name could not be resolved through gnr 
     man.data$data_source[counter] <<- "World Register of Marine Species"
   } # else leave columns with original NA values
@@ -158,10 +140,6 @@ is_abiotic <- function(name, counter) {
 
 # helper function to fill in information for specific classes
 is_specific <- function(name, counter) {
-  # check if bad or other
-  if (name == "bad" | name == "other") {
-    return(TRUE)
-  }
   # check if name has a higher ranking of Eukaryota
   if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3") {
     # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
@@ -174,7 +152,7 @@ is_specific <- function(name, counter) {
     # check if name is from automated classifier
   if (name == "mix_elongated") {
     # gets classified as diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes (same as mix for automated)
-    man.data$name[counter] <<- "mix_elongated_auto"
+    man.data$name <<- "mix_elongated_auto"
     man.data$alt_datasource[counter] <<- "NCBI"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
@@ -192,13 +170,11 @@ is_specific <- function(name, counter) {
   }
   # check if higher ranking is dinoflagellate then run through script
   if (name == "dino30" | name == "dino") {
-    man.data$name[counter] <<- "Dinoflagellata"
-    return(FALSE)
+    man.data$name <<- "Dinoflagellata"
   }
   # check if name was misclassified then run through script wiht corrected name
   if (name == "DactFragCerataul") {
     man.data$resolved_names[counter] <<- "Dactyliosolen fragilissimus"
-    return(FALSE)
   }
   # check if ciliate mix manual
   if (name == "Ciliate mix" || name == "ciliate_mix") {
@@ -210,11 +186,9 @@ is_specific <- function(name, counter) {
   }
   return(FALSE)
 }
-```
 
 
-## Script for using taxize and worrms packages
-```{r, echo=FALSE, include=FALSE}
+## ---- echo=FALSE, include=FALSE------------------------------------------
 # Resolve names 
 counter <- 1
 # column names 
@@ -224,10 +198,10 @@ man.data$taxon_name_fromid <- NA_character_
 man.data$higher_order_fromid <- NA_character_
 man.data$higher_order_id <- NA_character_
 man.data$data_source <- NA_character_
-man.data$resolved_id_fromgnr <- NA_integer_
+man.data$resolved_id_fromgnr <- NA_character_
 man.data$resolved_taxon_level_fromgnr <- NA_character_
 man.data$resolved_higher_order_fromgnr <- NA_character_
-man.data$resolved_higher_order_id <- NA_integer_
+man.data$resolved_higher_order_id <- NA_character_
 man.data$name_match <- FALSE
 man.data$id_match <- FALSE
 man.data$higher_match <- FALSE
@@ -340,4 +314,4 @@ worms_verified <- man.data$name[!is.na(man.data$resolved_id_fromgnr)]
 
 #convert to csv file 
 write.csv(man.data, my_path)
-```
+
