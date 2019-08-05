@@ -76,6 +76,8 @@ plot1:
         - Unix Shell
         - current file hierarchy of this repo
         - Internet
+        - conda
+        - pyifcb
 
 
 plot2:
