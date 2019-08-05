@@ -144,5 +144,5 @@ map.save("IFCB_EN608_map.html")
 # save information to csv files, comment out as necessary
 good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
 subset_samples.to_csv("transect_subset.csv", index=None, header=True)
-all_samples.to_csv("comparison.csv", index=None, header=True)
+all_samples.to_csv("geographic_subset.csv", index=None, header=True)
 # joes_samples.to_csv("query_samples.csv", index=None, header=True)
