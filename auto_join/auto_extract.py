@@ -9,6 +9,7 @@
 # constructs the url from hard coding to the IFCBB dashboard
 
 import pandas as pd
+import numpy as np
 import ssl
 import urllib
 import subprocess
@@ -70,13 +71,12 @@ def auto_construct(all_samples, level_1b):
     # initialize features and class data frames
     columns = ['permalink', 'sample_identifier', 'roi_number', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
     f_df = pd.DataFrame(columns=columns)
-
     # initialize counter and loop through all samples
     counter = 0
     for row in samples.iterrows():
         # skip if empty
         if (pd.isnull(samples.pid[counter])):
-            break
+            continue
         # get access to get online files
         ssl._create_default_https_context = ssl._create_unverified_context
         # get features and class files from IFCB dashboard
@@ -189,6 +189,9 @@ root.destroy()
 all_samples = pd.read_csv(file_name)
 # drop verifications and user_id columns for now
 all_samples = all_samples.drop(['user_id', 'verifications'], axis=1)
+# drop all blank rows
+all_samples.dropna(axis=0, how='all', inplace=True)
+
 # initialize level 1b formatted DataFrame
 columns = ['permalink', 'namespace_automated', 'identification_automated', 'namespace_manual', 'identification_manual', 'worms_higher_order_manual', 'higher_order_id', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
 level_1b = pd.DataFrame(columns=columns)
