@@ -1,29 +1,38 @@
 # EDI-NES-LTER-2019
-Kathy's project files for the NES-LTER project with EDI for 2019 Summer 
 
-Project members and collaboraters: Stace Beaulieu, Joe Futrelle, Heidi Sosik, Katherine Qi
+## Overview
+Kathy's project files for the NES-LTER project with EDI for 2019 Summer. This includes Python and R scripts for data analysis and publication.
 
-Includes Python and R scripts for data analysis and publication:
 
-Base Requiremeents:
+## Project members and collaboraters
+Stace Beaulieu, Joe Futrelle, Heidi Sosik, Katherine Qi
+
+
+## Base Requiremeents
+
 R, Python 3.6+, Anaconda, jupyter notebook, Unix-like OS that can run Bash
 
-Installation:
+
+## Installation
 
 First, follow instructions to install the pyifcb environment in your current
 working directory: https://github.com/joefutrelle/pyifcb
 
 Create a conda enviornment:
 
+```
     conda env create -f environment.yml
     python setup.py install
-
+```
 
 Or use an existing, activated Python3 conda environment: 
 
+```
     conda install --file requirements.txt
     python setup.py install
+```
 
+## Current Required Packages
 
 auto_join:
     This includes a Python script (auto_extract.py) that creates a file 1_b prototype that can be used for 
