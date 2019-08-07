@@ -10,12 +10,13 @@ library(tcltk)
 ## ------------------------------------------------------------------------
 # local development only
 rm(list=ls())
-setwd("~/Desktop/WHOI_LTER/projects/namespace_validation/")
+base_dir <- dirname(getwd())
+curr_dir <- paste(base_dir,"/auto_join/", sep="")
+setwd(curr_dir)
 #man.data <- read.csv(file.choose())
 man.data <- read.csv(tk_choose.files(caption = "Choose a .csv file to validate"))
 #man.data <- read.csv("20190529_classify_classlabel.csv")
-my_path <- "~/Desktop/WHOI_LTER/projects/namespace_validation/resolved.csv"
-
+my_path <- paste(curr_dir,"resolved.csv", sep="")
 
 ## ------------------------------------------------------------------------
 # wrapper function to call taxize get_wormsid function and put data into appropriate column 
@@ -35,8 +36,8 @@ acquire_wormsid <- function(resolved_name, counter, man.data) {
     resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
     get.id <- paste(resolved_name, sep='.', "AphiaID")
     # Pull highest order taxon id
-    resolved_id <- response[1, get.id]
-    man.data$resolved_id_fromgnr[counter] <<- resolved_id
+    resolved_id <- as.numeric(response[1, get.id])
+    man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
     # sets data_source column if original name could not be resolved through gnr 
     man.data$data_source[counter] <<- "World Register of Marine Species"
   } # else leave columns with original NA values
@@ -140,6 +141,10 @@ is_abiotic <- function(name, counter) {
 
 # helper function to fill in information for specific classes
 is_specific <- function(name, counter) {
+  # check if bad or other
+  if (name == "bad" | name == "other") {
+    return(TRUE)
+  }
   # check if name has a higher ranking of Eukaryota
   if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3") {
     # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
@@ -152,7 +157,7 @@ is_specific <- function(name, counter) {
     # check if name is from automated classifier
   if (name == "mix_elongated") {
     # gets classified as diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes (same as mix for automated)
-    man.data$name <<- "mix_elongated_auto"
+    man.data$name[counter] <<- "mix_elongated_auto"
     man.data$alt_datasource[counter] <<- "NCBI"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
@@ -170,11 +175,21 @@ is_specific <- function(name, counter) {
   }
   # check if higher ranking is dinoflagellate then run through script
   if (name == "dino30" | name == "dino") {
-    man.data$name <<- "Dinoflagellata"
+    # retain original name but add international id field of Dinoflagellata
+    man.data$international_id[counter] <<- 146203
+    return(FALSE)
   }
   # check if name was misclassified then run through script wiht corrected name
   if (name == "DactFragCerataul") {
-    man.data$resolved_names[counter] <<- "Dactyliosolen fragilissimus"
+    # retain original but add international id of Dactyliosolen fragilissimus
+    man.data$international_id[counter] <<- 149310
+    return(FALSE)
+  }
+  # check if name is zooplankton, change to kingdom rank
+  if (name == "zooplankton") {
+    # retain original name but add international id of Animalia
+    man.data$international_id[counter] <<- 2
+    return(FALSE)
   }
   # check if ciliate mix manual
   if (name == "Ciliate mix" || name == "ciliate_mix") {
@@ -198,10 +213,10 @@ man.data$taxon_name_fromid <- NA_character_
 man.data$higher_order_fromid <- NA_character_
 man.data$higher_order_id <- NA_character_
 man.data$data_source <- NA_character_
-man.data$resolved_id_fromgnr <- NA_character_
+man.data$resolved_id_fromgnr <- NA_integer_
 man.data$resolved_taxon_level_fromgnr <- NA_character_
 man.data$resolved_higher_order_fromgnr <- NA_character_
-man.data$resolved_higher_order_id <- NA_character_
+man.data$resolved_higher_order_id <- NA_integer_
 man.data$name_match <- FALSE
 man.data$id_match <- FALSE
 man.data$higher_match <- FALSE
@@ -301,7 +316,7 @@ for (row in 1:nrow(man.data)) {
         # case: gnr unable to resolve by name, fill with NA 
         man.data$resolved_names[counter] <- NA_character_
         # fill ID with NA
-        man.data$resolved_id_fromgnr[counter] <- NA_character_
+        man.data$resolved_id_fromgnr[counter] <- NA_integer_
       }
     }
   }

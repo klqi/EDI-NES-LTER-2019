@@ -163,7 +163,7 @@ is_specific <- function(name, counter) {
     return(TRUE)
   }
   # check if name has a higher ranking of Eukaryota
-  if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3") {
+  if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3" | name == "clusterflagellate") {
     # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
     man.data$alt_datasource[counter] <<- "NCBI"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
@@ -197,7 +197,7 @@ is_specific <- function(name, counter) {
   }
   # check if name was misclassified then run through script wiht corrected name
   if (name == "DactFragCerataul") {
-    man.data$resolved_names[counter] <<- "Dactyliosolen fragilissimus"
+    man.data$names[counter] <<- "Dactyliosolen fragilissimus"
     return(FALSE)
   }
   # check if ciliate mix manual
