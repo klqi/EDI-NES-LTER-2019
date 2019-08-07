@@ -5,6 +5,26 @@ Project members and collaboraters: Stace Beaulieu, Joe Futrelle, Heidi Sosik, Ka
 
 Includes Python and R scripts for data analysis and publication:
 
+Base Requiremeents:
+R, Python 3.6+, Anaconda, jupyter notebook, Unix-like OS that can run Bash
+
+Installation:
+
+First, follow instructions to install the pyifcb environment in your current
+working directory: https://github.com/joefutrelle/pyifcb
+
+Create a conda enviornment:
+
+    conda env create -f environment.yml
+    python setup.py install
+
+
+Or use an existing, activated Python3 conda environment: 
+
+    conda install --file requirements.txt
+    python setup.py install
+
+
 auto_join:
     This includes a Python script (auto_extract.py) that creates a file 1_b prototype that can be used for 
     analysis of features and classes from the automatic classifier.
