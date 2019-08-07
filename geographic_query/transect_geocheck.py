@@ -46,7 +46,7 @@ subset_samples = pd.read_csv(subset_file, usecols=['pid'])
 # initialize column headers with latitude/longitude from original file and
 # ulatitude/ulongitude from gps_furuno data
 columns = ['index', 'sample_identifier', 'latitude', 'longitude', 'ulatitude', 'ulongitude']
-col = ['date', 'new_pid']
+col = ['date', 'pid']
 good_samples = pd.DataFrame(columns=columns)
 # only includes data from underway for query
 joes_samples = pd.DataFrame(columns=col)
@@ -95,7 +95,7 @@ for row in all_samples.iterrows():
         # put into coordinates with sample identifier in dataframe
         good_samples = good_samples.append({'index': index, 'sample_identifier': cut, 'latitude': lat, 'longitude': long, 'ulatitude': ulat, 'ulongitude': ulong}, ignore_index=True)
         # put old and new pids into joes_samples
-        joes_samples = joes_samples.append({'date': all_samples.date[counter], 'new_pid': all_samples.pid[counter]}, ignore_index=True)
+        joes_samples = joes_samples.append({'date': all_samples.date[counter], 'pid': all_samples.key[counter]}, ignore_index=True)
         # keep track of counter
         index += 1
     # if only original coordinates are within ref_dist range
@@ -113,7 +113,7 @@ for row in all_samples.iterrows():
         # put into coordinates with sample identifier in dataframe
         good_samples = good_samples.append({'index': index, 'sample_identifier': cut, 'latitude': 'NA', 'longitude': 'NA', 'ulatitude': ulat, 'ulongitude': ulong}, ignore_index=True)
         # put coordinates into joes_samples, only including underway data
-        joes_samples = joes_samples.append({'date': all_samples.date[counter], 'new_pid': all_samples.pid[counter]}, ignore_index=True)
+        joes_samples = joes_samples.append({'date': all_samples.date[counter], 'pid': all_samples.key[counter]}, ignore_index=True)
         # keep track of counter
         index += 1
     counter += 1
@@ -145,4 +145,4 @@ map.save("IFCB_EN608_map.html")
 good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
 subset_samples.to_csv("transect_subset.csv", index=None, header=True)
 all_samples.to_csv("geographic_subset.csv", index=None, header=True)
-# joes_samples.to_csv("query_samples.csv", index=None, header=True)
+joes_samples.to_csv("query_samples.csv", index=None, header=True)
