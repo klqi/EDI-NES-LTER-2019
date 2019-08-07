@@ -8,9 +8,9 @@ BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ $1 = 'y' ]; then
     # clear files
     cd auto_join
-    rm resolved_auto.csv resolved_manual.csv volumes.csv
+    rm resolved_auto.csv resolved_manual.csv 
     cd ../plot1
-    rm resolved_auto.csv resolved_manual.csv
+    rm resolved_auto.csv resolved_manual.csv volumes.csv
     cd ..
 fi
 
@@ -25,6 +25,8 @@ python3 -W ignore $GEO_DIR <<EOF
 EOF
 # copy desired output file to plot1 dir
 cp geographic_subset.csv ../plot1
+# copy list of auto samples to auto_join
+cp query_samples.csv ../auto_join
 ls
 
 # make sure auto_extract script is executable
