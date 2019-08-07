@@ -9,7 +9,6 @@
 # constructs the url from hard coding to the IFCBB dashboard
 
 import pandas as pd
-import numpy as np
 import ssl
 import urllib
 import subprocess
@@ -57,6 +56,8 @@ def merge_frames(f_df, c_df, id_df):
             ).reset_index()
     # drop unnecessary columns
     winners = winners.drop(['sample_identifier', 'roi_number'], axis=1)
+    # reset pid
+    # winners['pid'] = winners['permalink']
     # reset permalink
     winners['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + winners['permalink'].astype(str)
     # rename column headers
@@ -65,9 +66,9 @@ def merge_frames(f_df, c_df, id_df):
 
 
 # helper function to construct automated classifications
-def auto_construct(all_samples, level_1b):
+def auto_construct(level_1b):
     # subset samples so that each sample will only be called once
-    samples = all_samples.drop_duplicates(subset='pid').reset_index()
+    samples = pd.read_csv('query_samples.csv')
     # initialize features and class data frames
     columns = ['permalink', 'sample_identifier', 'roi_number', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
     f_df = pd.DataFrame(columns=columns)
@@ -112,7 +113,7 @@ def auto_construct(all_samples, level_1b):
             # output resolved file
             id_df.to_csv('resolved_auto.csv', index=None, header=True)
             id_df = id_df[['name', 'resolved_names', 'resolved_id_fromgnr']]
-        else:
+        elif path.exists('resolved_auto.csv'):
             # initialize id data frame from existing file
             id_df = pd.read_csv('resolved_auto.csv', usecols=['name', 'resolved_names', 'resolved_id_fromgnr'])
         print("Merging...")
@@ -160,14 +161,26 @@ def manual_construct(all_samples, level_1b):
 
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
-    # fill in unpopulated manual namespace columns
-    level_1b['namespace_manual'] = samples['class_name']
+    # make pre_level_1b dataframe from level_1b
+    pre_level_1b = level_1b[['permalink', 'namespace_automated', 'identification_automated', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']]
+    # level_1b['namespace_manual'] = samples['class_name']
     # fill in manual ids
-    level_1b['identification_manual'] = samples['resolved_id_fromgnr']
+    # level_1b['identification_manual'] = samples['resolved_id_fromgnr']
     # fill in higher ranks
-    level_1b['worms_higher_order_manual'] = samples['resolved_higher_order_fromgnr']
+    # level_1b['worms_higher_order_manual'] = samples['resolved_higher_order_fromgnr']
     # fill in higher rank ids
-    level_1b['higher_order_id'] = samples['resolved_higher_order_id']
+    # level_1b['higher_order_id'] = samples['resolved_higher_order_id']
+    # add leading zeros to roi column
+    samples['roi'] = samples['roi'].astype(int)
+    samples['roi'] = samples['roi'].apply(lambda x: '{0:0>5}'.format(x))
+    # make key to merge on
+    samples['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + samples['pid'].astype(str) + '_' + samples['roi'].astype(str)
+    print(samples['permalink'][1])
+    pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
+    # rename manual column headers
+    pre_level_1b.rename(columns={"class_name": "namespace_manual", "resolved_id_fromgnr": "identification_manual", "resolved_higher_order_fromgnr": "worms_higher_order_manual", "resolved_higher_order_id": "higher_order_id"}, inplace=True)
+    # drop unnecessary columns
+    level_1b = pre_level_1b.drop(['pid', 'roi'], axis=1)
     return level_1b
 
 
@@ -182,7 +195,7 @@ root.after_idle(root.attributes, '-topmost', False)
 # close window when done
 root.update()
 # prompt user input for all samples file, man_ann format
-file_name = filedialog.askopenfilename(initialdir=".", title="Choose csv file with all samples")
+file_name = filedialog.askopenfilename(initialdir=".", title="Choose csv file with all manual samples")
 root.destroy()
 
 # initialize samples dataframe from input files
@@ -198,11 +211,13 @@ level_1b = pd.DataFrame(columns=columns)
 
 
 # first construct for automated classifications
-level_1b = auto_construct(all_samples, level_1b)
+level_1b = auto_construct(level_1b)
 # then construct manual classifications half
 level_1b = manual_construct(all_samples, level_1b)
 # rearrange columns back to order
 level_1b = level_1b[columns]
+# drop unnecessary column
+# level_1b = level_1b.drop('pid', axis=1)
 # convert back into csv file
 out_filename = 'level_1b.csv'
 level_1b.to_csv(out_filename, index=None, header=True)
