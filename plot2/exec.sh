@@ -23,6 +23,8 @@ python3 -W ignore $GEO_DIR <<EOF
 EOF
 # copy desired output file to plot2 dir
 cp geographic_subset.csv ../plot2
+# copy list of auto samples to auto_join
+cp query_samples.csv ../auto_join
 ls
 
 # make sure auto_join script is executable
