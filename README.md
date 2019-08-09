@@ -1,131 +1,47 @@
 # EDI-NES-LTER-2019
 
 ## Overview
-Kathy's project files for the NES-LTER project with EDI for 2019 Summer. This includes Python and R scripts for data analysis and publication.
+Kathy's project files for the NES-LTER project with EDI for 2019 Summer. This includes Python and R scripts for data analysis and publication. The purpose of this program is to run analyses on IFCB data for manual and automatic classifications, drawing data from the IFCB dashboard and NES-LTER rest API. 
+
+This workflow is intended to be reproducible to other IFCB transect cruise
+data. Additionally, the data produced will be packaged and submitted to several
+online repositories such as Environmental Data Initiative (EDI), NASA SeaBASS,
+BCO-DMO. 
+
+For additional information, visit https://nes-lter.whoi.edu/
 
 
 ## Project members and collaboraters
-Stace Beaulieu, Joe Futrelle, Heidi Sosik, Katherine Qi
+Stace Beaulieu, Joe Futrelle, Heidi Sosik, Katherine Qi (klqi@ucsd.edu)
 
 
 ## Base Requiremeents
 
-R, Python 3.6+, Anaconda, jupyter notebook, Unix-like OS that can run Bash
+R, Python 3.6+, Anaconda, jupyter notebook, bash
 
 
 ## Installation
 
-First, follow instructions to install the pyifcb environment in your current
-working directory: https://github.com/joefutrelle/pyifcb
+Clone this repository into your current working directory:
 
-Create a conda enviornment:
+```
+git clone https://github.com/klqi/EDI-NES-LTER-2019.git
+```
+
+Create a conda enviornment from EDI-NES-LTER repo:
 
 ```
     conda env create -f environment.yml
-    python setup.py install
 ```
 
 Or use an existing, activated Python3 conda environment: 
 
 ```
-    conda install --file requirements.txt
-    python setup.py install
+    conda env update -f environment.yml
 ```
 
-## Current Required Packages
+## Status
 
-auto_join:
-    This includes a Python script (auto_extract.py) that creates a file 1_b prototype that can be used for 
-    analysis of features and classes from the automatic classifier.
-    
-    Dependencies and Requirements:
-        - Python 3.6
-        - Pandas
-        - ssl
-        - urllib
-        - All csv files within folder 
-
-
-namespace_validation:
-    This project uses an R Markdown file (WoRMS_verify.Rmd) to resolve and re-classisy given taxonomic
-    groups to the WoRMS database (primary) or NCBI (secondary). It generates an output csv file with the 
-    original and corrected information that can be manually edited for name space development for 
-    further analysis. 
-    
-    Dependencies and Requirements:
-        - R/RStudio
-        - taxize
-        - worrms
-        - plyr
-        - dplyr
-        - tcltk
-        - X11 server (if on MacOS)
-        - Internet
-
-
-geographic_validation:
-    This iteration includes a Python script (transect_geocheck.py) that
-    generates 2 csv files and an html file. "transect_subset.csv" is the
-    original samples given (~140) with location data and
-    "good_transect_subset.csv" is the newly generated samples based on user
-    inputted distance from the reference longitudinal line (station 5). The
-    html file generated is a leaflet map with the entire sample set (green), the good
-    transect subset (purple), and the original transect subset (yellow). 
-    
-    Dependencies and Requirements:
-        - Python 3.6
-        - Pandas
-        - folium
-        - geopy
-        - ssl
-        - urllib
-        - Internet
-
-
-plot1:
-    This includes 2 scripts, wide2long.Rmd and
-    concentration_geographic_analysis.ipynb, that take a subset of IFCB sample
-    data and plot the concentration against distance offshore. It groups the
-    species into Diatoms, Dinoflagellates, Haptophytes, and other, then graphs
-    them across latitude. The jupyter notebook includes a bash script that can
-    be run from any unix machine, creating the required files to make the
-    analysis. 
-
-    Dependncies and Requirements:
-        - RStudio
-        - tidyverse
-        - stringr
-        - dplyr
-        - Python 3.6
-        - JupyterLab
-        - matplotlib
-        - pandas
-        - tkinter
-        - numpy
-        - Unix Shell
-        - current file hierarchy of this repo
-        - Internet
-        - conda
-        - pyifcb
-
-
-plot2:
-    This includes the script, biovolume_geographic_analysis.ipynb, which takes
-    the outputs from transect_geocheck.py and auto_extract.py to make a plot
-    analyzing the percent biovolume of higher ranking groups in samplesi
-    across latitude.
-    Currently, it draws data from the automatic classifier data from the IFCB
-    dashboard, but it can use manual classification data as well. The jupyter notebook includes a bash script that can
-    be run from any unix machine, creating the required files to make the
-    analysis.
-
-    Dependencies and Requirements:
-        - Python 3.6
-        - JupyterLab
-        - pandas
-        - tkinter
-        - numpy
-        - matplotlib
-        - Unix Shell
-        - current file hierarchy of this repo
-        - Internet
+As of August 9, this complete version (Cruise EN608) was developed over Summer 2019 as an EDI
+fellowship project. Further capabilities are developed to allow this workflow
+to become more reproducible. 
