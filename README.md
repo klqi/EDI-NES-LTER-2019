@@ -31,13 +31,13 @@ git clone https://github.com/klqi/EDI-NES-LTER-2019.git
 Create a conda enviornment from EDI-NES-LTER repo:
 
 ```
-    conda env create -f environment.yml
+conda env create -f environment.yml
 ```
 
 Or use an existing, activated Python3 conda environment: 
 
 ```
-    conda env update -f environment.yml
+conda env update -f environment.yml
 ```
 
 ## Status
