@@ -1,68 +1,52 @@
 name,international_id
-other,NA
-detritus,NA
-mix,NA
-Rhizosolenia,NA
-Cylindrotheca,NA
-Bacillariophyceae,NA
-Guinardia delicatula,NA
-mix elongated,NA
-Thalassiosira,NA
-Leptocylindrus,NA
-Proterythropsis sp,NA
-bead,NA
-pennate,NA
-Amphidinium,NA
-Phaeocystis,NA
-Ciliate mix,NA
-Pseudo-nitzschia,NA
-Dinophyceae,NA
-Ditylum brightwellii,NA
-Dactyliosolen fragilissimus,NA
-cryptophyta,NA
-Pleurosigma,NA
-Katodinium or Torodinium,NA
-Guinardia flaccida,NA
-Corethron hystrix,NA
-Skeletonema,NA
-Chaetoceros,NA
-Strombidium oculatum,NA
-Gyrodinium,NA
-Pyramimonas,NA
-Dictyocha,NA
-Apedinella,NA
-flagellate,NA
-Calciosolenia brasiliensis,NA
-Dactyliosolen blavyanus,NA
+pid,NA
+Asterionellopsis,NA
+Cerataulina,NA
 Ceratium,NA
-Thalassionema,NA
-Cerataulina pelagica,NA
-Prorocentrum,NA
-Corymbellus,NA
-Tintinnida,NA
-Guinardia striata,NA
-Heterocapsa rotundata,NA
+Chaetoceros,NA
+Corethron,NA
 Coscinodiscus,NA
-Asterionellopsis glacialis,NA
-bubble,NA
-Laboea strobila,NA
-Stenosemella sp1,NA
-Protoperidinium,NA
-flagellate sp3,NA
-Emiliania huxleyi,NA
-Stephanopyxis,NA
-Bacteriastrum,NA
-Mesodinium,NA
+Cylindrotheca,NA
+DactFragCerataul,NA
+Dactyliosolen,NA
+Dictyocha,NA
+Dinobryon,NA
 Dinophysis,NA
-Leptocylindrus mediterraneus,NA
-Calciopappus,NA
-square unknown,NA
-Ophiaster,NA
-amoeba,NA
+Ditylum,NA
 Ephemera,NA
-Acanthoica quattrospina,NA
-Chaetoceros debilis,NA
-Lauderia annulata,NA
-zooplankton,NA
-Oxytoxum,NA
-fecal pellet,NA
+Eucampia,NA
+Euglena,NA
+Gonyaulax,NA
+Guinardia,NA
+Guinardia_flaccida,NA
+Guinardia_striata,NA
+Gyrodinium,NA
+Hemiaulus,NA
+Laboea,NA
+Lauderia,NA
+Leptocylindrus,NA
+Licmophora,NA
+Myrionecta,NA
+Odontella,NA
+Paralia,NA
+Phaeocystis,NA
+Pleurosigma,NA
+Prorocentrum,NA
+Pseudonitzschia,NA
+Pyramimonas,NA
+Rhizosolenia,NA
+Skeletonema,NA
+Stephanopyxis,NA
+Thalassionema,NA
+Thalassiosira,NA
+Thalassiosira_dirty,NA
+bad,NA
+ciliate_mix,NA
+clusterflagellate,NA
+detritus,NA
+dino30,NA
+kiteflagellates,NA
+mix,NA
+mix_elongated,NA
+pennate,NA
+tintinnid,NA

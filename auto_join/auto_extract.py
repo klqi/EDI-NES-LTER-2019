@@ -175,7 +175,6 @@ def manual_construct(all_samples, level_1b):
     samples['roi'] = samples['roi'].apply(lambda x: '{0:0>5}'.format(x))
     # make key to merge on
     samples['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + samples['pid'].astype(str) + '_' + samples['roi'].astype(str)
-    print(samples['permalink'][1])
     pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
     # rename manual column headers
     pre_level_1b.rename(columns={"class_name": "namespace_manual", "resolved_id_fromgnr": "identification_manual", "resolved_higher_order_fromgnr": "worms_higher_order_manual", "resolved_higher_order_id": "higher_order_id"}, inplace=True)

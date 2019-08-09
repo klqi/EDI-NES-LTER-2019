@@ -4,6 +4,14 @@
 cd ..
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# activate pyifcb environment
+CONDA_BASE=$(conda info --base)
+source $CONDA_BASE/etc/profile.d/conda.sh
+conda activate pyifcb
+
+PYTHON=$(which python)
+
+
 # check if new cruise is being run
 if [ $1 = 'y' ]; then
     # clear files
@@ -20,7 +28,7 @@ chmod u+x $GEO_DIR
 # change working directories (plot1 => geographic_query)
 cd geographic_query
 # run transect_geocheck.py to get geographic_subset.csv with 1km range
-python3 -W ignore $GEO_DIR <<EOF
+$PYTHON -W ignore $GEO_DIR <<EOF
 1
 EOF
 # copy desired output file to plot1 dir
@@ -35,7 +43,7 @@ chmod u+x $JOIN_SCRIPT
 # change working directories (geographic_query => auto_join)
 cd ../auto_join/
 # run auto_extract to get file1_b.csv
-python3 $JOIN_SCRIPT
+$PYTHON $JOIN_SCRIPT
 cp level_1b.csv ../plot1
 # also move to volume dir
 cp level_1b.csv ../volume
@@ -52,12 +60,8 @@ VOL_SCRIPT="${BASE_DIR}/volume/get_volume.py"
 chmod u+x $VOL_SCRIPT
 # change working directories (auto_join => volume)
 cd ../volume/
-# activate pyifcb environment
-# CONDA_BASE=$(conda info --base)
-# source $CONDA_BASE/etc/profile.d/conda.sh
-# conda activate pyifcb
 # run get_volume to get volumes.csv
-python3 -W ignore $VOL_SCRIPT
+$PYTHON -W ignore $VOL_SCRIPT
 # move volumes.csv to plot1 irectory
 cp volumes.csv ../plot1
 # return to plot1 wd

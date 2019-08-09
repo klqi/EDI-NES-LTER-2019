@@ -1,0 +1,20 @@
+name: lter
+channels:
+ - conda-forge
+dependencies:
+- python=3
+- scipy
+- pandas
+- h5py
+- requests
+- Pillow
+- scikit-image
+- pip
+- r-base
+- r-knitr
+- r-taxize
+- folium
+- geopy
+- pip:
+  - rectpack
+  - pysmb
