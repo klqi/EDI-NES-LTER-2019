@@ -40,6 +40,11 @@ Or use an existing, activated Python3 conda environment:
 conda env update -f environment.yml
 ```
 
+## Workflow
+
+See [current workflow
+diagram](https://github.com/klqi/EDI-NES-LTER-2019/blob/master/NES-LTER%20Transect%20Analysis%20Workflow%20Diagram.png)
+
 ## Status
 
 As of August 9, this complete version (Cruise EN608) was developed over Summer 2019 as an EDI
