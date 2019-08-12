@@ -168,7 +168,7 @@ is_specific <- function(name, counter) {
     man.data$alt_datasource[counter] <<- "NCBI"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
-    man.data$resolved_higher_order_id[counter] <<- "-6666"
+    man.data$resolved_higher_order_id[counter] <<- -6666
     return(TRUE)
   }
     # check if name is from automated classifier
@@ -178,7 +178,7 @@ is_specific <- function(name, counter) {
     man.data$alt_datasource[counter] <<- "NCBI"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
-    man.data$resolved_higher_order_id[counter] <<- "-6666"
+    man.data$resolved_higher_order_id[counter] <<- -6666
     return(TRUE)
   }
   # check if name has a higher ranking of Diatom
@@ -197,7 +197,7 @@ is_specific <- function(name, counter) {
   }
   # check if name was misclassified then run through script wiht corrected name
   if (name == "DactFragCerataul") {
-    man.data$names[counter] <<- "Dactyliosolen fragilissimus"
+    man.data$name[counter] <<- "Dactyliosolen fragilissimus"
     return(FALSE)
   }
   # check if ciliate mix manual
@@ -209,6 +209,28 @@ is_specific <- function(name, counter) {
     return(TRUE)
   }
   return(FALSE)
+}
+
+# helper function to determine whether resolved name is accepted
+is_valid <- function(resolved_name) {
+  # set resolved name from gnr
+  check <- resolved_name
+  # check records
+  stats <- wm_records_name(name = check)
+  # check if more than one result is returned, ie for higher ranks than species
+  if (nrow(stats) > 1) {
+    # just return current name
+    return(check)
+  }
+  stats <- as.data.frame(stats)
+  # check if status is unaccepted
+  if (stats$status == "unaccepted") {
+    # replace with accepted name
+    return(stats$valid_name)
+  } else {
+    # keep original
+    return(check)
+  }
 }
 ```
 
@@ -235,6 +257,7 @@ man.data$alt_datasource <- NA_character_
 man.data$alt_resolved_name <- NA_character_
 # reorder columns bcuz R is annoying
 man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "higher_order_id", "data_source", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "resolved_higher_order_id", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
+
 # change data type
 man.data$name <- as.character(man.data$name)
 man.data$international_id <- as.numeric(man.data$international_id)
@@ -262,6 +285,8 @@ for (row in 1:nrow(man.data)) {
   if (!empty(temp)) {
     # add to resolved_names column
     resolved_name <- unlist(temp[1, 'matched_name2'])
+    # first check if name is accepted
+    resolved_name <- is_valid(resolved_name)
     man.data$resolved_names[counter] <- resolved_name
     # add to data_source or alt_ds column
     authority <- unlist(temp[1, 'data_source_title'])
@@ -327,7 +352,7 @@ for (row in 1:nrow(man.data)) {
         # case: gnr unable to resolve by name, fill with NA 
         man.data$resolved_names[counter] <- NA_character_
         # fill ID with NA
-        man.data$resolved_id_fromgnr[counter] <- NA_character_
+        man.data$resolved_id_fromgnr[counter] <- NA_integer_
       }
     }
   }

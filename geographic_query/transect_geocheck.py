@@ -15,10 +15,12 @@ import urllib
 import os
 
 dir_path = os.path.dirname(os.path.abspath('__file__'))
+# this needs to be edited to allow for other cruise data- can do with another script
 all_samples_file = dir_path + '/NESLTER_transect_EN608_Jan2018_ifcb_locations.csv'
 subset_file = dir_path + '/man_query_data.csv'
 # for online access
 ssl._create_default_https_context = ssl._create_unverified_context
+# underway also needs to not be hard-coded
 underway_file = "https://nes-lter-data.whoi.edu/api/underway/en608.csv"
 urllib.request.urlopen(underway_file)
 # coordinates for station 5
@@ -142,7 +144,7 @@ for row in subset_samples.iterrows():
 # save map
 map.save("IFCB_EN608_map.html")
 # save information to csv files, comment out as necessary
-good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
-subset_samples.to_csv("transect_subset.csv", index=None, header=True)
+# good_samples.to_csv("good_transect_subset.csv", index=None, header=True)
+# subset_samples.to_csv("transect_subset.csv", index=None, header=True)
 all_samples.to_csv("geographic_subset.csv", index=None, header=True)
 joes_samples.to_csv("query_samples.csv", index=None, header=True)

@@ -9,7 +9,12 @@ if [ $1 = 'y' ]; then
     # clear files
     cd auto_join
     rm resolved_auto.csv resolved_manual.csv
+    cd ../plot1
+    rm resolved_auto.csv resolved_manual.csv
+    rm level_1b.csv 
+    rm percent_biovolume.png biovolume_concentration.png
     cd ..
+
 fi
     
 # make sure geographic script is executable

@@ -16,9 +16,11 @@ PYTHON=$(which python)
 if [ $1 = 'y' ]; then
     # clear files
     cd auto_join
-    rm resolved_auto.csv resolved_manual.csv 
+    rm resolved_auto.csv resolved_manual.csv  
     cd ../plot1
     rm resolved_auto.csv resolved_manual.csv volumes.csv
+    rm level_1b.csv level_2.csv
+    rm taxon_abundance.png
     cd ..
 fi
 

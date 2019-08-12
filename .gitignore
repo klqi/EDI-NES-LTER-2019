@@ -1,0 +1,8 @@
+__pycache__/
+.DS_Store
+.Rhistory
+.ipynb_checkpoints/
+wide2long.R
+wide2long.Rmd
+*.html
+venv/
