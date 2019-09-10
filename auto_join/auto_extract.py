@@ -9,6 +9,7 @@
 # constructs the url from hard coding to the IFCBB dashboard
 
 import pandas as pd
+import numpy as np
 import ssl
 import urllib
 import subprocess
@@ -215,9 +216,17 @@ level_1b = auto_construct(level_1b)
 level_1b = manual_construct(all_samples, level_1b)
 # rearrange columns back to order
 level_1b = level_1b[columns]
-# drop unnecessary column
-# level_1b = level_1b.drop('pid', axis=1)
-# convert back into csv file
+# convert pixels to micrometers
+level_1b = pd.read_csv("level_1b.csv")
+# 1 um = 3.4 pixels
+pixels = 3.4
+# convert Area- (SQRT(Area)/3.4)^2
+level_1b.Area = ((np.sqrt(level_1b.Area))/pixels)**2
+# convert Biovolume- ((Biovolume^(1/3))/3.4)^3
+level_1b.Biovolume = ((level_1b.Biovolume**(1/3))/pixels)**3
+# convert AxisLengths- AxisLength/3
+level_1b.MajorAxisLength = level_1b.MajorAxisLength/pixels
+level_1b.MinorAxisLength = level_1b.MinorAxisLength/pixels
 out_filename = 'level_1b.csv'
 level_1b.to_csv(out_filename, index=None, header=True)
 print("Output generated")
