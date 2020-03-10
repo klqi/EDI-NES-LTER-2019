@@ -13,8 +13,6 @@ import numpy as np
 import ssl
 import urllib
 import subprocess
-import tkinter as tk
-from tkinter import filedialog
 import os
 from os import path
 
@@ -51,8 +49,8 @@ def merge_frames(f_df, c_df, id_df):
                     'resolved_id_fromgnr': '|'.join,
                     'Area': 'first',
                     'Biovolume': 'first',
-                    'MajorAxisLength': 'first',
-                    'MinorAxisLength': 'first'
+                    'maxFeretDiameter': 'first',
+                    'minFeretDiameter': 'first'
                 }
             ).reset_index()
     # drop unnecessary columns
@@ -60,10 +58,11 @@ def merge_frames(f_df, c_df, id_df):
     # reset pid
     # winners['pid'] = winners['permalink']
     # reset permalink
-    winners['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + winners['permalink'].astype(str)
+    winners['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + winners['permalink'].astype(str) + '.html'
     # rename column headers
-    winners = winners.rename(columns={"winner": "namespace_automated", "resolved_id_fromgnr": "identification_automated"})
+    winners = winners.rename(columns={"winner": "data_provider_category_MachineObservation", "resolved_id_fromgnr": "scientificNameID_MachineObservation"})
     return winners
+
 
 
 # helper function to construct automated classifications
@@ -71,7 +70,7 @@ def auto_construct(level_1b):
     # subset samples so that each sample will only be called once
     samples = pd.read_csv('query_samples.csv')
     # initialize features and class data frames
-    columns = ['permalink', 'sample_identifier', 'roi_number', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
+    columns = ['permalink', 'sample_identifier', 'roi_number', 'Area', 'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']
     f_df = pd.DataFrame(columns=columns)
     # initialize counter and loop through all samples
     counter = 0
@@ -87,7 +86,7 @@ def auto_construct(level_1b):
         urllib.request.urlopen(features_file)
         class_file = '{}_class_scores.csv'.format(link)
         # extract ROI ID, class, area, biovolume, major/min axes
-        f_df = pd.read_csv(features_file, usecols=['roi_number', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength'])
+        f_df = pd.read_csv(features_file, usecols=['roi_number', 'Area', 'Biovolume', 'maxFeretDiameter', 'minFeretDiameter'])
         # set sample_identifier for merge with auto_class names later
         f_df['sample_identifier'] = samples.pid[counter]
         # get autoclass name
@@ -163,40 +162,23 @@ def manual_construct(all_samples, level_1b):
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
     # make pre_level_1b dataframe from level_1b
-    pre_level_1b = level_1b[['permalink', 'namespace_automated', 'identification_automated', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']]
-    # level_1b['namespace_manual'] = samples['class_name']
-    # fill in manual ids
-    # level_1b['identification_manual'] = samples['resolved_id_fromgnr']
-    # fill in higher ranks
-    # level_1b['worms_higher_order_manual'] = samples['resolved_higher_order_fromgnr']
-    # fill in higher rank ids
-    # level_1b['higher_order_id'] = samples['resolved_higher_order_id']
-    # add leading zeros to roi column
+    pre_level_1b = level_1b[['permalink', 'data_provider_category_MachineObservation', 
+                            'scientificNameID_MachineObservation', 'Area', 
+                            'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']]
     samples['roi'] = samples['roi'].astype(int)
     samples['roi'] = samples['roi'].apply(lambda x: '{0:0>5}'.format(x))
     # make key to merge on
-    samples['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + samples['pid'].astype(str) + '_' + samples['roi'].astype(str)
+    samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['pid'].astype(str)+"_"+samples['roi'].astype(str)+".html"
     pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
     # rename manual column headers
-    pre_level_1b.rename(columns={"class_name": "namespace_manual", "resolved_id_fromgnr": "identification_manual", "resolved_higher_order_fromgnr": "worms_higher_order_manual", "resolved_higher_order_id": "higher_order_id"}, inplace=True)
+    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation", "resolved_id_fromgnr": "scientificNameID_HumanObservation", "resolved_higher_order_fromgnr": "higherClassification_group", "resolved_higher_order_id": "higher_order_id"}, inplace=True)
     # drop unnecessary columns
     level_1b = pre_level_1b.drop(['pid', 'roi'], axis=1)
     return level_1b
 
 
-# prompt user for csv file containing all samples to query from dashboard
-root = tk.Tk()
-# gets rid of annoying window
-root.withdraw()
-# bring gui to front
-root.lift()
-root.attributes('-topmost', True)
-root.after_idle(root.attributes, '-topmost', False)
-# close window when done
-root.update()
-# prompt user input for all samples file, man_ann format
-file_name = filedialog.askopenfilename(initialdir=".", title="Choose csv file with all manual samples")
-root.destroy()
+# read in file directly- take in as cli arg later
+file_name = "new_man_query_data.csv"
 
 # initialize samples dataframe from input files
 all_samples = pd.read_csv(file_name)
@@ -206,7 +188,11 @@ all_samples = all_samples.drop(['user_id', 'verifications'], axis=1)
 all_samples.dropna(axis=0, how='all', inplace=True)
 
 # initialize level 1b formatted DataFrame
-columns = ['permalink', 'namespace_automated', 'identification_automated', 'namespace_manual', 'identification_manual', 'worms_higher_order_manual', 'higher_order_id', 'Area', 'Biovolume', 'MajorAxisLength', 'MinorAxisLength']
+columns = ['permalink', 'data_provider_category_MachineObservation',
+            'scientificNameID_MachineObservation',
+            'data_provider_category_HumanObservation', 
+            'scientificNameID_HumanObservation', 'higherClassification_group', 
+            'Area', 'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']
 level_1b = pd.DataFrame(columns=columns)
 
 
@@ -217,16 +203,19 @@ level_1b = manual_construct(all_samples, level_1b)
 # rearrange columns back to order
 level_1b = level_1b[columns]
 # convert pixels to micrometers
-level_1b = pd.read_csv("level_1b.csv")
 # 1 um = 3.4 pixels
 pixels = 3.4
 # convert Area- (SQRT(Area)/3.4)^2
-level_1b.Area = ((np.sqrt(level_1b.Area))/pixels)**2
+level_1b.Area = ((np.sqrt(level_1b.Area.astype(float)))/pixels)**2
+level_1b.Area = level_1b.Area.round(3)
 # convert Biovolume- ((Biovolume^(1/3))/3.4)^3
 level_1b.Biovolume = ((level_1b.Biovolume**(1/3))/pixels)**3
+level_1b.Biovolume= level_1b.Biovolume.round(3)
 # convert AxisLengths- AxisLength/3
-level_1b.MajorAxisLength = level_1b.MajorAxisLength/pixels
-level_1b.MinorAxisLength = level_1b.MinorAxisLength/pixels
+level_1b.maxFeretDiameter = level_1b.maxFeretDiameter/pixels
+level_1b.maxFeretDiameter = level_1b.maxFeretDiameter.round(3)
+level_1b.minFeretDiameter = level_1b.minFeretDiameter/pixels
+level_1b.minFeretDiameter = level_1b.minFeretDiameter.round(3)
 out_filename = 'level_1b.csv'
 level_1b.to_csv(out_filename, index=None, header=True)
 print("Output generated")
