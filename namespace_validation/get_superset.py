@@ -7,3 +7,10 @@ def unique_annotations(file_name, column):
     # get rid of nan values if exist
     classes = [x for x in classes if str(x) != "nan"]
     return classes
+
+new_samples = unique_annotations("newMERGEDchar_20200320.csv", "class_char.y")
+new_samples = pd.DataFrame(new_samples, columns=["name"])
+# merge with original manual classifications file
+old_samples = pd.read_csv("20190529_classify_classlabel.csv")
+superset = old_samples.merge(new_samples, how='outer', on="name")
+superset.to_csv("2019-2020_superset.csv")
