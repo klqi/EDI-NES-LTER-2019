@@ -5,6 +5,7 @@ library(worrms)
 library(plyr)
 library(dplyr)
 library(tcltk)
+library(tryCatchLog)
 
 
 ## ------------------------------------------------------------------------
@@ -20,28 +21,54 @@ my_path <- paste(curr_dir,"resolved.csv", sep="")
 
 
 ## ------------------------------------------------------------------------
-# wrapper function to call taxize get_wormsid function and put data into appropriate column 
+# wrapper function to call taxize get_wormsid function and put data into appropriate column
 acquire_wormsid <- function(resolved_name, counter, man.data) {
-  response <- taxize::get_wormsid_(
-    resolved_name,
-    searchtype = 'scientific',
-    accepted = F,
-    ask = F,
-    messages = F
-  )
-  # check if name was able to return an id from worms
-  response <- as.data.frame(response)
-  if (!empty(response)) {
-    # standardize resolved name to retrieve id
-    resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
-    resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
-    get.id <- paste(resolved_name, sep='.', "AphiaID")
-    # Pull highest order taxon id
-    resolved_id <- as.numeric(response[1, get.id])
-    man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
-    # sets data_source column if original name could not be resolved through gnr 
+  # first check if name needs hard coding
+  hard_code <- needs_hard_coding(resolved_name)
+  # should only work for Tintinnida so far 
+  if (hard_code$check == TRUE) {
+    working_name <- hard_code$resolved_name
+    # get valid aphia id from unaccepted name 
+    stats <- wm_record_(name = working_name)
+    man.data$resolved_id_fromgnr[counter] <<- as.numeric(stats[[1]]$valid_AphiaID)
     man.data$data_source[counter] <<- "World Register of Marine Species"
-  } # else leave columns with original NA values
+    man.data$taxon_function[counter] <<- "worrms"
+  }
+  # call worrms name2id function as priority
+  else {
+    err = FALSE
+    tryCatch( {resolved_id <- wm_name2id(resolved_name) },
+              error = function(e) {err <<- TRUE})
+    if (err == FALSE) {
+      man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
+      man.data$data_source[counter] <<- "World Register of Marine Species"
+      man.data$taxon_function[counter] <<- "worrms"
+    }
+    # try taxize if fails
+    else {
+      response <- taxize::get_wormsid_(
+        resolved_name,
+        searchtype = 'scientific',
+        accepted = F,
+        ask = F,
+        messages = F
+      )
+      # check if name was able to return an id from worms
+      response <- as.data.frame(response)
+      if (!empty(response)) {
+        # standardize resolved name to retrieve id
+        resolved_name <- gsub(" ", ".", resolved_name, fixed=TRUE)
+        resolved_name <- gsub("-", ".", resolved_name, fixed=TRUE)
+        get.id <- paste(resolved_name, sep='.', "AphiaID")
+        # Pull highest order taxon id
+        resolved_id <- as.numeric(response[1, get.id])
+        man.data$resolved_id_fromgnr[counter] <<- as.numeric(resolved_id)
+        # sets data_source column if original name could not be resolved through gnr
+        man.data$data_source[counter] <<- "World Register of Marine Species"
+        man.data$taxon_function[counter] <<- "taxize"
+      } # else leave columns with original NA values
+    }
+  }
 }
 
 taxon_match <- function(counter, man.data) {
@@ -64,8 +91,14 @@ taxon_match <- function(counter, man.data) {
 
 # retrieves taxon information based on name
 name2taxoninfo <- function(tx_name, counter, man.data) {
+  # first check if needed hard coding
+  hard_code <- needs_hard_coding(tx_name)
+  # so far should only work for Tintinnida/Tintinnina
+  if (hard_code$check == TRUE) {
+    tx_name <- hard_code$resolved_name
+  }
   # use worms db to get taxon level
-  taxon_level <- unlist(tax_rank(tx_name, db='worms', rows=1))
+  taxon_level <- unlist(tax_rank(tx_name, db='worms', rows=1, marine_only = FALSE))
   man.data$resolved_taxon_level_fromgnr[counter] <<- taxon_level
   # use taxize classification function to get higher order (class, infraphylum, phylum)
   hierarchy <- taxize::classification(tx_name, db='worms', rows=1)
@@ -98,7 +131,7 @@ id2taxoninfo <- function(int_id, counter, man.data) {
   taxon_level <- unlist(tax_rank(int_id, db='worms', rows=1))
   man.data$taxon_level_fromid[counter] <<- taxon_level
   # populate taxon_name
-  taxon_name <- wm_id2name(id=int_id)
+  taxon_name <- wm_id2name(id=as.numeric(int_id))
   man.data$taxon_name_fromid[counter] <<- taxon_name
   # populate higher_order
   hierarchy <- classification(int_id, db='worms', rows=1)
@@ -131,7 +164,8 @@ id2taxoninfo <- function(int_id, counter, man.data) {
 
 # helper function to fill in information for abiotic classes
 is_abiotic <- function(name, counter) {
-  if (name == "detritus" | name == "bead" | name == "bubble" | name == "pollen" | name == "camera spot") {
+  if (name == "detritus" | name == "bead" | name == "bubble" | name == "pollen" | name == "camera spot" | name == "fecal pellet") {
+    man.data$resolved_id_fromgnr[counter] <<- -999999
     man.data$alt_datasource[counter] <<- "OCB"
     man.data$alt_resolved_name[counter] <<- toString(name)
     return(TRUE)
@@ -143,23 +177,24 @@ is_abiotic <- function(name, counter) {
 # helper function to fill in information for specific classes
 is_specific <- function(name, counter) {
   # check if bad or other
-  if (name == "bad" | name == "other") {
+  if (name == "bad" | name == "other" | name == "pid") {
     return(TRUE)
   }
   # check if name has a higher ranking of Eukaryota
-  if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3" | name == "clusterflagellate") {
+  if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3" | name == "clusterflagellate" | name == "square unknown") {
     # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
-    man.data$alt_datasource[counter] <<- "NCBI"
+    man.data$alt_datasource[counter] <<- "AlgaeBase"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
+    man.data$resolved_id_fromgnr[counter] <<- "urn:lsid:algaebase.org:taxname:86701"
     return(TRUE)
   }
     # check if name is from automated classifier
   if (name == "mix_elongated") {
     # gets classified as diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes (same as mix for automated)
     man.data$name[counter] <<- "mix_elongated_auto"
-    man.data$alt_datasource[counter] <<- "NCBI"
+    man.data$alt_datasource[counter] <<- "AlgaeBase"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
@@ -168,6 +203,7 @@ is_specific <- function(name, counter) {
   # check if name has a higher ranking of Diatom
   if (name == "pennate" | name == "pennate morphotype1" | name == "mix elongated") {
     # gets classified as diatoms
+    man.data$resolved_id_fromgnr[counter] <<- 148899
     man.data$alt_datasource[counter] <<- "Sosik-specific"
     man.data$alt_resolved_name[counter] <<- name
     man.data$resolved_higher_order_fromgnr[counter] <<- "Bacillariophyceae"
@@ -187,6 +223,7 @@ is_specific <- function(name, counter) {
   # check if ciliate mix manual
   if (name == "Ciliate mix" || name == "ciliate_mix") {
     # classify as other than diatoms, dinoflagellates, or haptophytes
+    man.data$resolved_id_fromgnr[counter] <<- 1348
     man.data$alt_datasource[counter] <<- "Sosik-specific"
     man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
@@ -195,25 +232,46 @@ is_specific <- function(name, counter) {
   return(FALSE)
 }
 
+# helper function for hard coding values
+needs_hard_coding <- function(name) {
+  hard_code = list("check" = FALSE, "resolved_name" = NA_character_)
+  # hard coded label, checked by Stace for is_valid
+  if (name == "Katodinium or Torodinium") {
+    hard_code <- list("check" = TRUE, "resolved_name" = "Gymnodiniacea")
+  }
+  # return the unaccepted name to retrieve info on valid name for name2taxoninfo
+  if (name == "Tintinnina") {
+    hard_code <- list("check" = TRUE, "resolved_name" = "Tintinnida")
+  }
+  return(hard_code)
+}
+
 # helper function to determine whether resolved name is accepted
 is_valid <- function(resolved_name) {
+  # check if needs to be hard_coded
+  hard_code <- needs_hard_coding(resolved_name)
+  if (hard_code$check == TRUE) {
+    return(hard_code$resolved_name)
+  }
   # set resolved name from gnr
   check <- resolved_name
+  err <- FALSE
   # check records
-  stats <- wm_records_name(name = check)
-  # check if more than one result is returned, ie for higher ranks than species
-  if (nrow(stats) > 1) {
+  tryCatch( {stats <- wm_record_(name = check) },
+            warning = function(w) {err <<- TRUE})
+  # check species doesn't exist on worms
+  if (err == TRUE) {
     # just return current name
     return(check)
-  }
-  stats <- as.data.frame(stats)
-  # check if status is unaccepted
-  if (stats$status == "unaccepted") {
-    # replace with accepted name
-    return(stats$valid_name)
   } else {
-    # keep original
-    return(check)
+    # only check if status is unaccepted; not necessarily always "accepted"
+    if (stats[[1]]$status == "unaccepted") {
+      # replace with accepted name
+      return(stats[[1]]$valid_name)
+    } else {
+      # keep original
+      return(check)
+    }
   }
 }
 
@@ -229,6 +287,7 @@ man.data$higher_order_fromid <- NA_character_
 man.data$higher_order_id <- NA_character_
 man.data$data_source <- NA_character_
 man.data$resolved_id_fromgnr <- NA_integer_
+man.data$taxon_function <- NA_character_
 man.data$resolved_taxon_level_fromgnr <- NA_character_
 man.data$resolved_higher_order_fromgnr <- NA_character_
 man.data$resolved_higher_order_id <- NA_integer_
@@ -238,7 +297,7 @@ man.data$higher_match <- FALSE
 man.data$alt_datasource <- NA_character_
 man.data$alt_resolved_name <- NA_character_
 # reorder columns bcuz R is annoying
-man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "higher_order_id", "data_source", "resolved_id_fromgnr", "resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "resolved_higher_order_id", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
+man.data[,c("name", "international_id", "resolved_names", "taxon_level_fromid", "taxon_name_fromid", "higher_order_fromid", "higher_order_id", "data_source", "resolved_id_fromgnr", "taxon_function","resolved_taxon_level_fromgnr", "resolved_higher_order_fromgnr", "resolved_higher_order_id", "name_match", "id_match", "higher_match", "alt_datasource", "alt_resolved_name")] 
 
 # change data type
 man.data$name <- as.character(man.data$name)
@@ -267,7 +326,7 @@ for (row in 1:nrow(man.data)) {
   if (!empty(temp)) {
     # add to resolved_names column
     resolved_name <- unlist(temp[1, 'matched_name2'])
-    # first check if name is accepted
+    # first check if name is accepted then return valid name
     resolved_name <- is_valid(resolved_name)
     man.data$resolved_names[counter] <- resolved_name
     # add to data_source or alt_ds column
@@ -341,6 +400,8 @@ for (row in 1:nrow(man.data)) {
   counter <- counter + 1
 }
 
+# append prefix to all column id names
+# man.data$resolved_id_fromgnr[!is.na(man.data$resolved_id_fromgnr)] <- paste()
 # collect all names with no resolved id
 sosik_specific <- man.data$name[is.na(man.data$resolved_id_fromgnr)]
 worms_verified <- man.data$name[!is.na(man.data$resolved_id_fromgnr)]

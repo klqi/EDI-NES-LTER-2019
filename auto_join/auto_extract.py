@@ -91,7 +91,7 @@ def auto_construct(level_1b):
         f_df['sample_identifier'] = samples.pid[counter]
         # get autoclass name
         c_df = pd.read_csv(class_file)
-        # make id dataframe to get automated names_ids
+        # make id dataframe to get automated names_ids from first automated class file
         if (counter == 0 and not path.exists('resolved_auto.csv')):
             # first check if file already exists
             # initialize dataframe to read ids
@@ -155,9 +155,9 @@ def manual_construct(all_samples, level_1b):
         id_df = pd.read_csv(resolved)
         # output resolved file
         id_df.to_csv('resolved_manual.csv', index=None, header=True)
-        id_df = id_df[['name', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id']]
+        id_df = id_df[['name', 'resolved_names','resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id']]
     else:
-        id_df = pd.read_csv('resolved_manual.csv', usecols=['name', 'resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id'])
+        id_df = pd.read_csv('resolved_manual.csv', usecols=['name', 'resolved_names','resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id'])
 
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
@@ -171,14 +171,18 @@ def manual_construct(all_samples, level_1b):
     samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['pid'].astype(str)+"_"+samples['roi'].astype(str)+".html"
     pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
     # rename manual column headers
-    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation", "resolved_id_fromgnr": "scientificNameID_HumanObservation", "resolved_higher_order_fromgnr": "higherClassification_group", "resolved_higher_order_id": "higher_order_id"}, inplace=True)
+    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation", 
+                                "resolved_names": "scientificName_HumanObservation", 
+                                "resolved_id_fromgnr": "scientificNameID_HumanObservation", 
+                                "resolved_higher_order_fromgnr": "higherClassification_group", 
+                                "resolved_higher_order_id": "higher_order_id"}, inplace=True)
     # drop unnecessary columns
     level_1b = pre_level_1b.drop(['pid', 'roi'], axis=1)
     return level_1b
 
 
 # read in file directly- take in as cli arg later
-file_name = "new_man_query_data.csv"
+file_name = "20200320_man_query_data.csv"
 
 # initialize samples dataframe from input files
 all_samples = pd.read_csv(file_name)
@@ -190,7 +194,7 @@ all_samples.dropna(axis=0, how='all', inplace=True)
 # initialize level 1b formatted DataFrame
 columns = ['permalink', 'data_provider_category_MachineObservation',
             'scientificNameID_MachineObservation',
-            'data_provider_category_HumanObservation', 
+            'data_provider_category_HumanObservation', 'scientificName_HumanObservation',
             'scientificNameID_HumanObservation', 'higherClassification_group', 
             'Area', 'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']
 level_1b = pd.DataFrame(columns=columns)
