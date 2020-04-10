@@ -4,7 +4,7 @@
 # analyzing ROIs in automated vs. manual classification of phytoplankton datas
 # Requirements:
 # csv file with column headers: "pid", "class_name", "roi", "user_id", and
-# "verifications"
+# "verifications", resolved manual/automated annotation files (manually checked)
 # pid must only contain the sample id, not the entire link as this script
 # constructs the url from hard coding to the IFCBB dashboard
 
@@ -15,6 +15,7 @@ import urllib
 import subprocess
 import os
 from os import path
+import sys
 
 
 # helper function for merging automated classifications
@@ -92,27 +93,9 @@ def auto_construct(level_1b):
         # get autoclass name
         c_df = pd.read_csv(class_file)
         # make id dataframe to get automated names_ids from first automated class file
-        if (counter == 0 and not path.exists('resolved_auto.csv')):
-            # first check if file already exists
-            # initialize dataframe to read ids
-            id_df = pd.DataFrame({'name': list(c_df.columns), 'international_id': 'NA'})
-            # output csv to be input for WoRMs_verify script
-            id_df.to_csv("intermediate_names_ids.csv", index=None, header=True)
-            # run WoRMs_verify.R
-            command = 'Rscript'
-            dir_path = os.path.dirname(os.path.abspath('__file__'))
-            path2script = dir_path + '/WoRMs_verify.R'
-            cmd = [command, path2script]
-            print("Running worms verification...")
-            # choose intermediate_names_ids.csv during prompt
-            subprocess.run(cmd)
-            print("Done")
-            # reinitialize id_df from output of WoRMs_verify
-            resolved = dir_path + '/resolved.csv'
-            id_df = pd.read_csv(resolved)
-            # output resolved file
-            id_df.to_csv('resolved_auto.csv', index=None, header=True)
-            id_df = id_df[['name', 'resolved_names', 'resolved_id_fromgnr']]
+        if (not path.exists('resolved_auto.csv')):
+            print("Resolved taxonomic annotations for automated classes required")
+            sys.exit()
         elif path.exists('resolved_auto.csv'):
             # initialize id data frame from existing file
             id_df = pd.read_csv('resolved_auto.csv', usecols=['name', 'resolved_names', 'resolved_id_fromgnr'])
@@ -136,28 +119,13 @@ def manual_construct(all_samples, level_1b):
     samples = all_samples.drop_duplicates(subset='class_name').reset_index()
 
     # check if resolved doesn't exist
-    if not (path.exists('resolved_manual.csv')):
-        # initialize dataframe to read idss
-        id_df = pd.DataFrame({'name': list(samples.class_name), 'international_id': 'NA'})
-        id_df.to_csv("intermediate_names_ids.csv", index=None, header=True)
-        # run WoRMs_verify.R
-        command = 'Rscript'
-        dir_path = os.path.dirname(os.path.abspath('__file__'))
-        path2script = dir_path + '/WoRMs_verify.R'
-        cmd = [command, path2script]
-        print("Running worms verification...")
-        # choose intermediate_names_ids.csv during prompt
-        subprocess.run(cmd)
-        print("Done")
-        # reinitialize id_df from output of WoRMs_verify
-        resolved = dir_path + '/resolved.csv'
-        # get name, ids, higher ranks, and higher rank ids
-        id_df = pd.read_csv(resolved)
-        # output resolved file
-        id_df.to_csv('resolved_manual.csv', index=None, header=True)
-        id_df = id_df[['name', 'resolved_names','resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id']]
+    if not (path.exists('resolved_manual_matched_matchIDs_LOOKUPsorted.csv')):
+        print("Resolved taxonomic annotations for manual classes required")
+        sys.exit()
     else:
-        id_df = pd.read_csv('resolved_manual.csv', usecols=['name', 'resolved_names','resolved_id_fromgnr', 'resolved_higher_order_fromgnr', 'resolved_higher_order_id'])
+        id_df = pd.read_csv('resolved_manual_matched_matchIDs_LOOKUPsorted.csv', 
+                            usecols=['name', 'scientificName_HumanObservation', 'scientificNameID_HumanObservation', 
+                                    'resolved_higher_order_fromgnr'])
 
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
@@ -171,9 +139,7 @@ def manual_construct(all_samples, level_1b):
     samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['pid'].astype(str)+"_"+samples['roi'].astype(str)+".html"
     pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
     # rename manual column headers
-    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation", 
-                                "resolved_names": "scientificName_HumanObservation", 
-                                "resolved_id_fromgnr": "scientificNameID_HumanObservation", 
+    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation",  
                                 "resolved_higher_order_fromgnr": "higherClassification_group", 
                                 "resolved_higher_order_id": "higher_order_id"}, inplace=True)
     # drop unnecessary columns
@@ -207,12 +173,12 @@ level_1b = manual_construct(all_samples, level_1b)
 # rearrange columns back to order
 level_1b = level_1b[columns]
 # convert pixels to micrometers
-# 1 um = 3.4 pixels
-pixels = 3.4
-# convert Area- (SQRT(Area)/3.4)^2
+# 1 um = 2.77 pixels
+pixels = 2.77
+# convert Area- (SQRT(Area)/2.77)^2
 level_1b.Area = ((np.sqrt(level_1b.Area.astype(float)))/pixels)**2
 level_1b.Area = level_1b.Area.round(3)
-# convert Biovolume- ((Biovolume^(1/3))/3.4)^3
+# convert Biovolume- ((Biovolume^(1/3))/2.77)^3
 level_1b.Biovolume = ((level_1b.Biovolume**(1/3))/pixels)**3
 level_1b.Biovolume= level_1b.Biovolume.round(3)
 # convert AxisLengths- AxisLength/3

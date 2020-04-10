@@ -15,8 +15,7 @@ For additional information, visit https://nes-lter.whoi.edu/
 Stace Beaulieu, Joe Futrelle, Heidi Sosik, Katherine Qi (klqi@ucsd.edu)
 
 
-## Base Requiremeents
-
+## Base Requirements 
 R, Python 3.6+, Anaconda, jupyter notebook, bash
 
 
