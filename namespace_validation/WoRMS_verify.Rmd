@@ -415,11 +415,8 @@ for (row in 1:nrow(man.data)) {
       }
     }
   }
-  counter <- counter + 1
 }
 
-# append prefix to all column id names
-# man.data$resolved_id_fromgnr[!is.na(man.data$resolved_id_fromgnr)] <- paste()
 # collect all names with no resolved id
 sosik_specific <- man.data$name[is.na(man.data$resolved_id_fromgnr)]
 worms_verified <- man.data$name[!is.na(man.data$resolved_id_fromgnr)]
