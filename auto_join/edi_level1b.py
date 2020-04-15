@@ -3,10 +3,10 @@ import pandas as pd
 
 level_1b = pd.read_csv("level_1b.csv")
 # get samples with manual annotations 
-manual_only = pd.read_csv("20200320_man_query_data.csv", usecols=['pid', 'roi'])
+manual_only = pd.read_csv("newMERGEDchar_20200320.csv", usecols=['bin', 'roi.y'])
 # check if there are samples from manual list with automated annotations but no manual annotations
-manual_only['roi'] = manual_only['roi'].astype(str).replace('\.0', '', regex=True).apply(lambda x: '{0:0>5}'.format(x))
-manual_only['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + manual_only.pid + '_' + manual_only.roi + '.html'
+manual_only['roi.y'] = manual_only['roi.y'].astype(str).replace('\.0', '', regex=True).apply(lambda x: '{0:0>5}'.format(x))
+manual_only['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + manual_only['bin'] + '_' + manual_only['roi.y'] + '.html'
 # merge with level_1b file
 merged = manual_only.merge(level_1b, on='permalink', how='inner')
 auto_only = merged[merged['data_provider_category_HumanObservation'].isna()]

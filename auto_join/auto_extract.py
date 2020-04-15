@@ -3,7 +3,7 @@
 # File Header: Python script to construct Level 1_b prototyping data tables for
 # analyzing ROIs in automated vs. manual classification of phytoplankton datas
 # Requirements:
-# csv file with column headers: "pid", "class_name", "roi", "user_id", and
+# csv file with column headers: "pid", "class_char.y", "roi", "user_id", and
 # "verifications", resolved manual/automated annotation files (manually checked)
 # pid must only contain the sample id, not the entire link as this script
 # constructs the url from hard coding to the IFCBB dashboard
@@ -116,7 +116,7 @@ def auto_construct(level_1b):
 # helper function to populate manual sections of level 1b file
 def manual_construct(all_samples, level_1b):
     # subset samples so that each name will only be called once
-    samples = all_samples.drop_duplicates(subset='class_name').reset_index()
+    samples = all_samples.drop_duplicates(subset='class_char.y').reset_index()
 
     # check if resolved doesn't exist
     if not (path.exists('resolved_manual_matched_matchIDs_LOOKUPsorted.csv')):
@@ -128,32 +128,33 @@ def manual_construct(all_samples, level_1b):
                                     'resolved_higher_order_fromgnr'])
 
     # merge ids with names from manual data
-    samples = pd.merge(all_samples, id_df, how='left', left_on='class_name', right_on='name')
+    samples = pd.merge(all_samples, id_df, how='left', left_on='class_char.y', right_on='name')
     # make pre_level_1b dataframe from level_1b
     pre_level_1b = level_1b[['permalink', 'data_provider_category_MachineObservation', 
                             'scientificNameID_MachineObservation', 'Area', 
                             'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']]
-    samples['roi'] = samples['roi'].astype(int)
-    samples['roi'] = samples['roi'].apply(lambda x: '{0:0>5}'.format(x))
+    samples['roi.y'] = samples['roi.y'].astype(int)
+    samples['roi.y'] = samples['roi.y'].apply(lambda x: '{0:0>5}'.format(x))
     # make key to merge on
-    samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['pid'].astype(str)+"_"+samples['roi'].astype(str)+".html"
+    samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['bin'].astype(str)+"_"+samples['roi.y'].astype(str)+".html"
     pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
     # rename manual column headers
-    pre_level_1b.rename(columns={"class_name": "data_provider_category_HumanObservation",  
+    pre_level_1b.rename(columns={"class_char.y": "data_provider_category_HumanObservation",  
                                 "resolved_higher_order_fromgnr": "higherClassification_group", 
                                 "resolved_higher_order_id": "higher_order_id"}, inplace=True)
     # drop unnecessary columns
-    level_1b = pre_level_1b.drop(['pid', 'roi'], axis=1)
+    level_1b = pre_level_1b.drop(['bin', 'roi.y'], axis=1)
     return level_1b
 
 
 # read in file directly- take in as cli arg later
-file_name = "20200320_man_query_data.csv"
+file_name = "newMERGEDchar_20200320.csv"
 
 # initialize samples dataframe from input files
-all_samples = pd.read_csv(file_name)
+cols = ['bin', 'class_char.y', 'roi.y']
+all_samples = pd.read_csv(file_name, usecols=cols)
 # drop verifications and user_id columns for now
-all_samples = all_samples.drop(['user_id', 'verifications'], axis=1)
+# all_samples = all_samples.drop(['user_id', 'verifications'], axis=1)
 # drop all blank rows
 all_samples.dropna(axis=0, how='all', inplace=True)
 
