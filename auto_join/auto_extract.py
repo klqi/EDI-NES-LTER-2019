@@ -61,7 +61,7 @@ def merge_frames(f_df, c_df, id_df):
     # reset permalink
     winners['permalink'] = 'http://ifcb-data.whoi.edu/NESLTER_transect/' + winners['permalink'].astype(str) + '.html'
     # rename column headers
-    winners = winners.rename(columns={"winner": "data_provider_category_MachineObservation", "resolved_id_fromgnr": "scientificNameID_MachineObservation"})
+    winners = winners.rename(columns={"winner": "data_provider_category_MachineObservation", "resolved_id_fromgnr": "scientificNameID_MachineObservation", "permalink": "associatedMedia"})
     return winners
 
 
@@ -130,16 +130,17 @@ def manual_construct(all_samples, level_1b):
     # merge ids with names from manual data
     samples = pd.merge(all_samples, id_df, how='left', left_on='class_char.y', right_on='name')
     # make pre_level_1b dataframe from level_1b
-    pre_level_1b = level_1b[['permalink', 'data_provider_category_MachineObservation', 
+    pre_level_1b = level_1b[['associatedMedia', 'data_provider_category_MachineObservation', 
                             'scientificNameID_MachineObservation', 'Area', 
                             'Biovolume', 'maxFeretDiameter', 'minFeretDiameter']]
     samples['roi.y'] = samples['roi.y'].astype(int)
     samples['roi.y'] = samples['roi.y'].apply(lambda x: '{0:0>5}'.format(x))
     # make key to merge on
     samples['permalink'] = "http://ifcb-data.whoi.edu/NESLTER_transect/"+samples['bin'].astype(str)+"_"+samples['roi.y'].astype(str)+".html"
-    pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='permalink')
+    samples.rename(columns={'permalink': 'associatedMedia'}, inplace=True)
+    pre_level_1b = pd.merge(pre_level_1b, samples, how='left', on='associatedMedia')
     # rename manual column headers
-    pre_level_1b.rename(columns={"class_char.y": "data_provider_category_HumanObservation",  
+    pre_level_1b.rename(columns={"class_char.y": "data_provider_category_HumanObservation", 
                                 "resolved_higher_order_fromgnr": "higherClassification_group", 
                                 "resolved_higher_order_id": "higher_order_id"}, inplace=True)
     # drop unnecessary columns
@@ -159,7 +160,7 @@ all_samples = pd.read_csv(file_name, usecols=cols)
 all_samples.dropna(axis=0, how='all', inplace=True)
 
 # initialize level 1b formatted DataFrame
-columns = ['permalink', 'data_provider_category_MachineObservation',
+columns = ['associatedMedia', 'data_provider_category_MachineObservation',
             'scientificNameID_MachineObservation',
             'data_provider_category_HumanObservation', 'scientificName_HumanObservation',
             'scientificNameID_HumanObservation', 'higherClassification_group', 

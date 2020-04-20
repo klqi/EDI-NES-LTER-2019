@@ -135,7 +135,7 @@ name2taxoninfo <- function(tx_name, counter, man.data) {
     man.data$resolved_higher_order_fromgnr[counter] <<- phylum
     man.data$resolved_higher_order_id[counter] <<- 369190
   } else {
-    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms dinoflagellates or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
   }
 }
@@ -169,7 +169,7 @@ id2taxoninfo <- function(int_id, counter, man.data) {
     man.data$higher_order_fromid[counter] <<- phylum
     man.data$higher_order_id[counter] <<- 369190
   } else {
-    man.data$higher_order_fromid[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$higher_order_fromid[counter] <<- "other than diatoms dinoflagellates or haptophytes"
     man.data$higher_order_id[counter] <<- -6666
   }
   
@@ -198,10 +198,10 @@ is_specific <- function(name, counter) {
   }
   # check if name has a higher ranking of Eukaryota
   if (name == "mix" | name == "flagellate" | name == "flagellate sp1" | name == "flagellate sp3" | name == "clusterflagellate" | name == "square unknown") {
-    # gets classified as "other than diatoms, dinoflagellates, or haptophytes" than diatoms, dinos, or haptophytes
+    # gets classified as "other than diatoms dinoflagellates or haptophytes" than diatoms, dinos, or haptophytes
     man.data$alt_datasource[counter] <<- "AlgaeBase"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
-    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms dinoflagellates or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
     man.data$resolved_id_fromgnr[counter] <<- "urn:lsid:algaebase.org:taxname:86701"
     return(TRUE)
@@ -212,7 +212,7 @@ is_specific <- function(name, counter) {
     man.data$name[counter] <<- "mix_elongated_auto"
     man.data$alt_datasource[counter] <<- "AlgaeBase"
     man.data$alt_resolved_name[counter] <<- "Eukaryota"
-    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms dinoflagellates or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
     return(TRUE)
   }
@@ -238,10 +238,10 @@ is_specific <- function(name, counter) {
   }
   # check if ciliate mix manual
   if (name == "Ciliate mix" || name == "ciliate_mix") {
-    # classify as other than diatoms, dinoflagellates, or haptophytes
+    # classify as other than diatoms dinoflagellates or haptophytes
     man.data$resolved_id_fromgnr[counter] <<- 1348
     man.data$alt_datasource[counter] <<- "Sosik-specific"
-    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms, dinoflagellates, or haptophytes"
+    man.data$resolved_higher_order_fromgnr[counter] <<- "other than diatoms dinoflagellates or haptophytes"
     man.data$resolved_higher_order_id[counter] <<- -6666
     return(TRUE)
   }
@@ -349,7 +349,7 @@ for (row in 1:nrow(man.data)) {
     man.data$resolved_names[counter] <- resolved_name
     # add to data_source or alt_ds column
     authority <- unlist(temp[1, 'data_source_title'])
-    # add to data_source if WORMs or alt_ds for other than diatoms, dinoflagellates, or haptophytes than diatoms, dinoflagellates, or haptophytes 
+    # add to data_source if WORMs or alt_ds for other than diatoms dinoflagellates or haptophytes than diatoms, dinoflagellates, or haptophytes 
     if (authority == primary_ds) {
       man.data$data_source[counter] <- authority
     } else {
@@ -415,6 +415,7 @@ for (row in 1:nrow(man.data)) {
       }
     }
   }
+  counter <- counter + 1
 }
 
 # collect all names with no resolved id
