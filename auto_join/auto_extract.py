@@ -188,6 +188,12 @@ level_1b.maxFeretDiameter = level_1b.maxFeretDiameter/pixels
 level_1b.maxFeretDiameter = level_1b.maxFeretDiameter.round(3)
 level_1b.minFeretDiameter = level_1b.minFeretDiameter/pixels
 level_1b.minFeretDiameter = level_1b.minFeretDiameter.round(3)
+
+# convert features to NaN if they are zero (failed features processing)
+level_1b.loc[level_1b['Biovolume'] == 0,['Area','Biovolume', 'maxFeretDiameter', 'minFeretDiameter']] = np.nan
 out_filename = 'level_1b.csv'
+zero_features = level_1b[level_1b.Biovolume.isna()]
+
+zero_features.to_csv("zero_features.csv", index=None, header=True)
 level_1b.to_csv(out_filename, index=None, header=True)
 print("Output generated")
