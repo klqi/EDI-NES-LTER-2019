@@ -336,6 +336,7 @@ for (row in 1:nrow(man.data)) {
     next
   }
   # try to resolve the name with gnr
+  # gnr_resolve: Uses exact or fuzzy matching to resolve scientific names against a variety of data sources (WoRMS dataset last updated in June 2020)
   temp <- gnr_resolve(names = as.vector(man.data$name[counter]),  canonical = T,
                       best_match_only = T, preferred_data_sources = c(9, 4))
   # set primary data source
